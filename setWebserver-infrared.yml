@@ -8,16 +8,16 @@
         state: present
       vars:
         web_packages:
-        - python3
+        - python3.5
         - python3-venv
         - python3-pip
+        - python3-setuptools
+        - python3-virtualenv
+        - python3-setuptools
+        - python-setuptools
     - name: install web packages 2
       pip:
-        name: "{{ pip_packages }}"
-        virtualenv: /vagrant/
-        virtualenv_command: /usr/bin/python3 -m venv
-      vars:
-        pip_packages:
-        - asyncio
-        - flask
+        requirements: /opt/web-infrared/requirements.txt
+        virtualenv: /opt/web-infrared/venv
+        virtualenv_command: /usr/bin/python3.5 -m venv
   

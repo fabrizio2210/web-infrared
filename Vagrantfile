@@ -18,9 +18,9 @@ Vagrant.configure("2") do |config|
   # node to develop
   config.vm.define "web-develop" do |node1|
     node1.vm.hostname = "web-develop"
-    node1.vm.box = "debian/jessie64"
+    node1.vm.box = "debian/stretch64"
     node1.vm.box_check_update = false
-    node1.vm.synced_folder './src/', '/vagrant'
+    node1.vm.synced_folder './src/', '/opt/web-infrared/'
     node1.vm.provider :libvirt do |domain|
       domain.memory = 1024
       domain.nested = true

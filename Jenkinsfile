@@ -9,7 +9,7 @@ pipeline {
 
       }
       steps {
-        sh '/usr/bin/true'
+        sh 'pip install -r src/requirements.txt'
       }
     }
     stage('Test') {

@@ -52,4 +52,5 @@ class ItemList(Resource):
 api.add_resource(Item, '/item/<string:name>')
 api.add_resource(ItemList, '/items')
 
-app.run(host=my_ip, port=5000, debug=True)
+if __name__ == '__main__':
+  app.run(host=my_ip, port=5000, debug=True)

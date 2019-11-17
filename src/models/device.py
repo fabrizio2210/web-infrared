@@ -8,9 +8,12 @@ from models import remote_control
 
 
 class DeviceModel():
-  def __init__(self, name, keys):
+  def __init__(self, name):
     self.name = name
-    self.keys = keys
+    self.keys = {}
+
+  def insert_key(self, key):
+    self.keys.update({key.name : key})
 
   def json(self):
     return {'name' : self.name, 'keys' : [ key.json() for key in self.keys.values()] }
@@ -32,4 +35,3 @@ class DeviceModel():
     except:
       return None
     return self.keys[key_name]
-    

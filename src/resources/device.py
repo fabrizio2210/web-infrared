@@ -5,6 +5,6 @@ class Device(Resource):
   def get(self, name):
     device = DeviceModel.find_by_name(name)
     if device:
-      return device.json()
+      return { 'device' : device.json()}
     return {'message': 'Device not found'}, 404
 

@@ -1,0 +1,12 @@
+<html>
+    <head>
+        <title>{{ title }}</title>
+    </head>
+    <body>
+        <ul>
+        {%for device in devices %}
+        <li><a href=/device/{{ device['name'] }}/web >{{ device['name'] }}</a></li>
+        {% endfor %}
+        </ul>
+    </body>
+</html>

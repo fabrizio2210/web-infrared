@@ -1,0 +1,12 @@
+<html>
+    <head>
+        <title>Remote Control for {{ device['name'] }}</title>
+    </head>
+    <body>
+        <ul>
+        {% for key in device['keys']|list|sort(attribute='name') %}
+        <li>{{ key['name'] }}</li>
+        {% endfor %}
+        </ul>
+    </body>
+</html>

@@ -83,7 +83,7 @@ class TestAPI(unittest.TestCase):
 
     def test_root(self):
         rv = self.app.get('/')
-        self.assertEqual(rv.status, '404 NOT FOUND')
+        self.assertEqual(rv.status, '200 OK')
 
     def test_post_key(self):
         rv = self.app.post('/device/televisore/key/POWER')

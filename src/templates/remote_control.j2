@@ -1,12 +1,57 @@
 <html>
     <head>
         <title>Remote Control for {{ device['name'] }}</title>
-    </head>
-    <body>
-        <ul>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script>
+        function get_all_object(obj) {
+          var str = ""
+          for (var i in obj){
+            str = str + i + ": " + obj[i] + "\n"
+          }
+          return str
+        }
         {% for key in device['keys']|list|sort(attribute='name') %}
-        <li>{{ key['name'] }}</li>
+          function function_{{ key['name'] }}(){
+            $.post("/device/{{ device['name'] }}/key/{{ key['name'] }}",
+            function(data,status){
+              alert("Status: " + status + "\n"+ get_all_object(data) );
+            });
+          }
         {% endfor %}
-        </ul>
+        </script>
+       <style media = "all">
+       a.button{
+         display: inline-block;
+         padding:0.8em 2.2em;
+         margin:0 0.3em 0.3em 0;
+         border-radius:2em;
+         box-sizing: border-box;
+         text-decoration:none;
+         font-family:'Roboto',sans-serif;
+         font-size: 160%;
+         font-weight:300;
+         color: #FFFFFF;
+         background-color:#4eb5f1;
+         text-align:center;
+         transition: all 0.2s;
+       }
+       a.button:hover{
+         background-color:#4095c6;
+       }
+       @media all and (max-width:70em){
+        a.button{
+          display:block;
+          margin:0.2em auto;
+        }
+       } 
+       </style>
+    </head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <body>
+        <div align="center">
+        {% for key in device['keys']|list|sort(attribute='name') %}
+        <a class="button" onclick="function_{{ key['name'] }}()">{{ key['name'] }}</a> </br>
+        {% endfor %}
+        </div>
     </body>
 </html>

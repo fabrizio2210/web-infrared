@@ -2,12 +2,12 @@
 set -x
 set -e
 
-_pwd=$PWD
+cd $(dirname $0)
 
 # Vagrant up
 vagrant up
 
 # Set infrastructure
 
-ansible-playbook -i vagrant.py -i vagrant-groups.list setWebserver-infrared.yml
+ansible-playbook -i vagrant.py -i vagrant-groups.list ../setApp.yml
 vagrant ssh -c "cd /opt/web-infrared/ ; source venv/bin/activate; python app.py"

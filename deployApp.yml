@@ -1,0 +1,29 @@
+---
+- hosts: webserver
+  become: true
+  tasks:
+    - name: define directory
+      file:
+        path: /opt/web-infrared/
+        state: directory
+        mode: 0755
+    - name: Find /var/log all directories, exclude nginx and mysql
+      find:
+        paths: src/
+        recurse: no
+        file_type: directory
+        excludes: '__pycache__,venv'
+      register: directories
+      delegate_to: localhost
+      become: false
+    - name: copy sources
+      copy:
+        src: "{{ item.path }}" 
+        dest: /opt/web-infrared/
+      with_items: "{{ directories.files }}"
+    - name: copy sources 2
+      copy:
+        src: "{{ item }}" 
+        dest: /opt/web-infrared/
+      with_fileglob:
+        - "src/*"

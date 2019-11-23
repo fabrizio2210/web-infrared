@@ -1,0 +1,43 @@
+---
+- hosts: webserver
+  become: true
+  tasks:
+    - name: install infrared package
+      apt:
+        name: lirc
+        state: present
+    - name: Insert boot configuration
+      lineinfile:
+        path: /boot/config.txt
+        line: "dtoverlay=lirc-rpi,gpio_in_pin=18,gpio_out_pin=17"
+        regexp: '^dtoverlay='
+        create: yes
+      notify: reboot
+    - name: Enable module lirc_dev
+      lineinfile:
+        path: /etc/modules
+        line: "lirc_dev"
+      notify: reboot
+    - name: Enable module lirc_rpi
+      lineinfile:
+        path: /etc/modules
+        line: "lirc_rpi gpio_in_pin=18 gpio_out_pin=17"
+      notify: reboot
+    - name: Point directory of configuration
+      lineinfile:
+        path: /etc/lirc/lircd.conf
+        line: 'include "/opt/web-infrared/conf/*.conf"'
+      notify: restart lircd
+    - name: Start lircd service
+      service:
+        name: lircd
+        state: started
+
+  handlers:
+    - name: reboot
+      reboot:
+    - name: restart lircd
+      service:
+        name: lircd
+        state: restarted
+

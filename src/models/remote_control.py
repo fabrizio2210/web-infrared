@@ -40,6 +40,7 @@ def find_device_by_name(name):
 def press(device_name, key_id):
   # Call to lircd to execute the action
   print("Call to lircd to execute on \"{}\" the \"{}\" key".format(device_name, key_id))
+  # irsend SEND_ONCE televisore KEY_POWER
   return "OK"
 
 

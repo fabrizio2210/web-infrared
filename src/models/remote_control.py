@@ -4,6 +4,7 @@
 # - list the devices
 from models.device import DeviceModel
 from models.key import KeyModel
+import subprocess
 import os
 import re
 
@@ -41,6 +42,7 @@ def press(device_name, key_id):
   # Call to lircd to execute the action
   print("Call to lircd to execute on \"{}\" the \"{}\" key".format(device_name, key_id))
   # irsend SEND_ONCE televisore KEY_POWER
+  subprocess.run(['irsend', 'SEND_ONCE', device_name, key_id])
   return "OK"
 
 

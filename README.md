@@ -20,6 +20,16 @@ irrecord -d /dev/lirc0 -k
 
 - Adhere to CI/CD mechanism
 
+## How
+
+- create test
+..- use unit test for python
+..- use molecule for Ansible part
+
+- use tools to automate test and deploy
+..- use Travis
+..- use Jenkins to do the same test and deploy
+
 
 # Tests
 

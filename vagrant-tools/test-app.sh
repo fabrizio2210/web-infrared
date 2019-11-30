@@ -10,4 +10,4 @@ vagrant up
 # Set infrastructure
 
 ansible-playbook -i ../vagrant.py -i ../vagrant-groups.list ../../setApp.yml
-vagrant ssh -c "cd /opt/web-infrared/ ; source venv/bin/activate; python tests/tests.py"
+vagrant ssh -c "cd /opt/web-infrared/ ; source venv/bin/activate; python tests/test-app.py"

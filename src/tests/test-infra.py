@@ -1,0 +1,18 @@
+import unittest
+import testinfra
+import sys
+from os import path
+sys.path.append( path.dirname( path.dirname( path.abspath(__file__) ) ) )
+import app
+
+
+class TestINFRA(unittest.TestCase):
+    def setUp(self):
+        self.host = testinfra.get_host("local://", sudo=True)
+
+    def test_lirc_package(self):
+        lirc = self.host.package("lirc")
+        self.assertTrue(lirc.is_installed)
+
+if __name__ == '__main__':
+    unittest.main()

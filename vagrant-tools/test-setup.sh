@@ -17,3 +17,9 @@ fi
 
 # Deploy App
 ansible-playbook -i ../vagrant.py -i ../vagrant-groups.list ../../deployApp.yml
+
+# Setup App
+ansible-playbook -i ../vagrant.py -i ../vagrant-groups.list ../../setApp.yml
+
+# Test
+vagrant ssh -c "cd /opt/web-infrared/ ; source venv/bin/activate; python tests/test-infra.py"

@@ -1,0 +1,3 @@
+[webserver:children]
+travis_vm ansible_connection=local
+

@@ -7,7 +7,7 @@
         path: /opt/web-infrared/
         state: directory
         mode: 0755
-    - name: Find /var/log all directories, exclude nginx and mysql
+    - name: Find src all directories, exclude __pycache__ and venv
       find:
         paths: src/
         recurse: no

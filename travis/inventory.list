@@ -1,3 +1,5 @@
-[webserver:children]
-travis_vm ansible_connection=local
+[control]
+localhost ansible_connection=local     
 
+[webserver:children]
+control

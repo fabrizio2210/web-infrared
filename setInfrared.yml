@@ -17,6 +17,7 @@
       lineinfile:
         path: /etc/modules
         line: "lirc_dev"
+        create: yes
       notify: reboot
     - name: Enable module lirc_rpi
       lineinfile:

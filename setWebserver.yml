@@ -4,7 +4,8 @@
   vars:
     log_folder: /var/log/web-infrared
     app_folder: /opt/web-infrared
-    socket_folder: "{{ app_folder }}/socket"
+    etc_folder: /etc/uwsgi
+    socket_folder: "{{ etc_folder }}/socket"
 
   tasks:
     - name: install nginx
@@ -17,6 +18,12 @@
         state: directory
         mode: 0755
         owner: www-data
+    - name: create etc for uwsgi
+      file:
+        path: "{{ etc_folder }}"
+        state: directory
+        mode: 0755
+        owner: root
     - name: create socket folder
       file:
         path: "{{ socket_folder }}"
@@ -35,7 +42,7 @@
     - name: create uwsgi conf
       template:
         src: uwsgi.ini.j2
-        dest: "{{ app_folder}}/uwsgi.ini"
+        dest: "{{ etc_folder}}/uwsgi.ini"
         mode: 0644
         owner: root
       notify: uwsgi restart

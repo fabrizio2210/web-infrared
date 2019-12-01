@@ -10,3 +10,4 @@ pytz==2019.3
 six==1.12.0
 Werkzeug==0.16.0
 testinfra==3.2.1
+uWSGI==2.0.18

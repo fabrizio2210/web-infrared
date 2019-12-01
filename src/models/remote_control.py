@@ -8,7 +8,8 @@ import subprocess
 import os
 import re
 
-conf_dir = 'conf/'
+current_dir = os.path.dirname(os.path.realpath(__file__))
+conf_dir = current_dir + '/../conf/'
 devices = []
 
 def get_devices():

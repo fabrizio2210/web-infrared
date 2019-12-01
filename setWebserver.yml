@@ -1,0 +1,84 @@
+---
+- hosts: webserver
+  become: true
+  vars:
+    log_folder: /var/log/web-infrared
+    app_folder: /opt/web-infrared
+    socket_folder: "{{ app_folder }}/socket"
+
+  tasks:
+    - name: install nginx
+      apt:
+        package: nginx
+        state: present
+    - name: create log folder
+      file:
+        path: "{{ log_folder }}"
+        state: directory
+        mode: 0755
+        owner: www-data
+    - name: create socket folder
+      file:
+        path: "{{ socket_folder }}"
+        state: directory
+        mode: 0755
+        owner: www-data
+    - name: create uwsgi service
+      template:
+        src: uwsgi.service.j2
+        dest: /etc/systemd/system/uwsgi-web-infrared.service
+        mode: 0644
+        owner: root
+      notify: systemd reload
+    - name: Force all notified handlers to run
+      meta: flush_handlers
+    - name: create uwsgi conf
+      template:
+        src: uwsgi.ini.j2
+        dest: "{{ app_folder}}/uwsgi.ini"
+        mode: 0644
+        owner: root
+      notify: uwsgi restart
+    - name: start uwsgi
+      service:
+        name: uwsgi-web-infrared
+        state: started
+    - name: install nginx
+      apt:
+        package: nginx
+        state: present
+    - name: Configure nginx site
+      template: 
+        src: web-infrared-site.conf.j2
+        dest: /etc/nginx/sites-available/web-infrared.conf
+        mode: 0644
+        owner: root
+      notify: nginx reload
+    - name: remove default site
+      file:
+        path: /etc/nginx/sites-enabled/default
+        state: absent
+      notify: nginx reload
+    - name: link nginx site
+      file:
+        state: link
+        src: /etc/nginx/sites-available/web-infrared.conf
+        dest: /etc/nginx/sites-enabled/web-infrared.conf
+      notify: nginx reload
+    - name: start nginx
+      service:
+        name: nginx
+        state: started
+      
+  handlers:
+    - name: systemd reload
+      command: systemctl daemon-reload
+    - name: uwsgi restart
+      service:
+        name: uwsgi-web-infrared
+        state: restarted
+    - name: nginx reload
+      service:
+        name: nginx
+        state: reloaded
+

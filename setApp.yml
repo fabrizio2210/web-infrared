@@ -15,6 +15,8 @@
         - python3-virtualenv
         - python3-setuptools
         - python-setuptools
+        - libpcre3
+        - libpcre3-dev
     - name: install web packages 2
       pip:
         requirements: /opt/web-infrared/requirements.txt

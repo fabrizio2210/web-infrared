@@ -50,6 +50,10 @@
       service:
         name: uwsgi-web-infrared
         state: started
+    - name: autostart uwsgi
+      service:
+        name: uwsgi-web-infrared
+        enabled: yes
     - name: install nginx
       apt:
         package: nginx
@@ -76,6 +80,10 @@
       service:
         name: nginx
         state: started
+    - name: enable nginx
+      service:
+        name: nginx
+        enabled: yes
       
   handlers:
     - name: systemd reload

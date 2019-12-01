@@ -7,23 +7,16 @@
         path: /opt/web-infrared/
         state: directory
         mode: 0755
-    - name: Find src all directories, exclude __pycache__ and venv
-      find:
-        paths: src/
-        recurse: no
-        file_type: directory
-        excludes: '__pycache__,venv'
-      register: directories
+    - name: find src 
+      shell: find src/* -path 'src/venv/*' -prune -o -path '*/__pycache__/*'  -o -print | grep -v '/venv$' | grep -v '/__pycache__$'
+      register: sources
       delegate_to: localhost
       become: false
+      changed_when: false
+
     - name: copy sources
       copy:
-        src: "{{ item.path }}" 
-        dest: /opt/web-infrared/
-      with_items: "{{ directories.files }}"
-    - name: copy sources 2
-      copy:
         src: "{{ item }}" 
-        dest: /opt/web-infrared/
-      with_fileglob:
-        - "src/*"
+        dest: "/opt/web-infrared/{{ item|regex_replace('^src\\/', '') }}"
+      with_items: "{{ sources.stdout_lines }}"
+

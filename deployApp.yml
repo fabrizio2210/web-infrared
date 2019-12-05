@@ -1,22 +1,28 @@
 ---
 - hosts: webserver
   become: true
+  vars:
+    find_string: "-path '*/venv/*' -prune -o -path '*/__pycache__/*'  -o"
+    find_string2: "-print | grep -v '/venv$' | grep -v '/__pycache__$'"
+    src: "src"
+    dest: "/opt/web-infrared"
+
   tasks:
     - name: define directory
       file:
-        path: /opt/web-infrared/
+        path: "{{ dest }}/"
         state: directory
         mode: 0755
 
-    - name: find src 
-      shell: find src/* -path 'src/venv/*' -prune -o -path '*/__pycache__/*'  -o -type f -print | grep -v '/venv$' | grep -v '/__pycache__$'
+    - name: find src files
+      shell: "find {{ src }}/* {{ find_string }} -type f {{ find_string2 }}"
       register: source_files
       delegate_to: localhost
       become: false
       changed_when: false
 
-    - name: find src 
-      shell: find src/* -path 'src/venv/*' -prune -o -path '*/__pycache__/*'  -o -type d -print | grep -v '/venv$' | grep -v '/__pycache__$'
+    - name: find src directories
+      shell: "find {{ src }}/* {{ find_string }} -type d {{ find_string2 }}"
       register: source_dirs
       delegate_to: localhost
       become: false
@@ -24,23 +30,23 @@
 
     - name: normalization
       set_fact:
-        norm_source_files: "{{ source_files.stdout_lines | map('regex_replace', '^src/', '/opt/web-infrared/') | list }}"
-        norm_source_dirs: "{{ source_dirs.stdout_lines | map('regex_replace', '^src/', '/opt/web-infrared/') | list }}"
+        norm_source_files: "{{ source_files.stdout_lines | map('regex_replace', '^' + src + '/', dest + '/') | list }}"
+        norm_source_dirs: "{{ source_dirs.stdout_lines | map('regex_replace', '^' + src + '/', dest + '/') | list }}"
 
     - name: create directory
       file:
         state: directory
-        path: "/opt/web-infrared/{{ item|regex_replace('^src\\/', '') }}"
+        path: "{{ dest }}/{{ item|regex_replace('^' + src + '\\/', '') }}"
       with_items: "{{ source_dirs.stdout_lines }}"
 
     - name: copy sources
       copy:
         src: "{{ item }}" 
-        dest: "/opt/web-infrared/{{ item|regex_replace('^src\\/', '') }}"
+        dest: "{{ dest }}/{{ item|regex_replace('^' + src + '\\/', '') }}"
       with_items: "{{ source_files.stdout_lines }}"
 
-    - name: find src 
-      shell: find /opt/web-infrared/* -path '*/venv/*' -prune -o -path '*/__pycache__/*'  -o -type f -print | grep -v '/venv$' | grep -v '/__pycache__$'
+    - name: find dest files
+      shell: "find {{ dest }}/* {{ find_string }} -type f {{ find_string2 }}"
       register: destination_files
       changed_when: false
 

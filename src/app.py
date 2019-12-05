@@ -8,8 +8,6 @@ from resources.key import Key
 from resources import web_remote
 import socket
 
-# Get own IP
-my_ip = (([ip for ip in socket.gethostbyname_ex(socket.gethostname())[2] if not ip.startswith("127.")] or [[(s.connect(("8.8.8.8", 53)), s.getsockname()[0], s.close()) for s in [socket.socket(socket.AF_INET, socket.SOCK_DGRAM)]][0][1]]) + ["no IP found"])[0]
 
 app = Flask(__name__)
 api = Api(app)
@@ -21,6 +19,8 @@ app.add_url_rule('/', view_func=web_remote.index)
 app.add_url_rule('/device/<string:name>/web', view_func=web_remote.get_remote_control_device)
 
 if __name__ == '__main__':
+# Get own IP
+  my_ip = (([ip for ip in socket.gethostbyname_ex(socket.gethostname())[2] if not ip.startswith("127.")] or [[(s.connect(("8.8.8.8", 53)), s.getsockname()[0], s.close()) for s in [socket.socket(socket.AF_INET, socket.SOCK_DGRAM)]][0][1]]) + ["no IP found"])[0]
   app.run(host=my_ip, port=5000, debug=True)
 
 

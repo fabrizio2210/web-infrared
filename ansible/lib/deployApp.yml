@@ -4,7 +4,7 @@
   vars:
     find_string: "-path '*/venv/*' -prune -o -path '*/__pycache__/*'  -o"
     find_string2: "-print | grep -v '/venv$' | grep -v '/__pycache__$'"
-    src: "src"
+    src: "../../src"
     dest: "/opt/web-infrared"
 
   tasks:

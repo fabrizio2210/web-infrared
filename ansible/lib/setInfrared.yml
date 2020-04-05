@@ -24,6 +24,11 @@
         path: /etc/modules
         line: "lirc_rpi gpio_in_pin=18 gpio_out_pin=17"
       notify: reboot
+# COnfigurazione con kernel 4.19.66+
+#dtoverlay=gpio-ir,gpio_pin=18
+#dtoverlay=gpio-ir-tx,gpio_pin=17
+# https://github.com/raspberrypi/linux/issues/2993
+
     - name: Point directory of configuration
       lineinfile:
         path: /etc/lirc/lircd.conf

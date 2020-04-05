@@ -13,8 +13,7 @@ pipeline {
     }
     stage('Test') {
       steps {
-        sh 'ls -la'
-        sh 'python tests/test-app.py'
+        sh 'cd src; python tests/test-app.py'
       }
     }
     stage('Deploy') {

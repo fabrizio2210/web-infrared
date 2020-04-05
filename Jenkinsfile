@@ -9,7 +9,8 @@ pipeline {
 
       }
       steps {
-        sh 'pip install --user --no-cache-dir -r src/requirements.txt'
+        sh 'virtualenv .venv'
+        sh 'source .venv/bin/activate ; pip install --no-cache-dir -r src/requirements.txt'
       }
     }
     stage('Test') {

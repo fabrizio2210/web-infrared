@@ -16,7 +16,7 @@ pipeline {
     }
     stage('Test') {
       steps {
-        sh '/usr/bin/true'
+        sh 'python tests/test-app.py'
       }
     }
     stage('Deploy') {

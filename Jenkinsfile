@@ -5,12 +5,13 @@ pipeline {
       agent {
         docker {
           image 'python:3.5'
+          args '-u root'
         }
 
       }
       steps {
-        sh 'virtualenv .venv'
-        sh 'source .venv/bin/activate ; pip install --no-cache-dir -r src/requirements.txt'
+
+        sh 'pip install --no-cache-dir -r src/requirements.txt'
       }
     }
     stage('Test') {

@@ -15,14 +15,13 @@ pipeline {
     }
     stage('Test') {
       steps {
-        sh 'cd /tmp/build/'
-        sh 'cd src; python tests/test-app.py; cd ..'
+        sh 'cd /tmp/build/; cd src; python tests/test-app.py; cd ..'
         ansiblePlaybook(inventory: 'travis/inventory.list', playbook: 'ansible/setup.yml')
       }
     }
     stage('Deploy') {
       steps {
-        sh '/usr/bin/true'
+        sh 'pwd'
       }
     }
   }

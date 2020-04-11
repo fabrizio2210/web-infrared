@@ -29,7 +29,8 @@ pipeline {
         python3 -m venv /tmp/build/venv/ ; \
         . /tmp/build/venv/bin/activate ; \
         pip3 install --no-cache-dir -r src/requirements.txt'
-        archiveArtifacts artifacts: 'tmp/build/venv/**/*.*'
+        sh 'tar -cvf build.tar -C /tmp/build/ venv/'
+        archiveArtifacts artifacts: 'build.tar'
       }
     }
     stage('Test') {

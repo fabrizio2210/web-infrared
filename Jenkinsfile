@@ -29,8 +29,9 @@ pipeline {
         python3 -m venv /tmp/build/venv/ ; \
         . /tmp/build/venv/bin/activate ; \
         pip3 install --no-cache-dir -r src/requirements.txt'
-        sh 'tar -cvf build.tar -C /tmp/build/ venv/'
+        sh 'tar -cvf build.tar -C /tmp/build/ venv/; chown 1000:996 build.tar'
         archiveArtifacts artifacts: 'build.tar'
+        stash includes: 'build.tar', name: 'venv'
       }
     }
     stage('Test') {
@@ -41,6 +42,14 @@ pipeline {
         }
       }
       steps {
+        script {
+          currentBuild.upstreamBuilds?.each { b ->
+            echo b.getFullProjectName()
+          }
+        }
+        sh 'mkdir -p /tmp/build/ ; cp -rav * /tmp/build/ '
+        unstash 'venv'
+        sh 'tar -xvf build.tar -C /tmp/build/'
         sh 'cd /tmp/build/; cd src; python3 tests/test-app.py; cd ..'
         ansiblePlaybook(inventory: 'travis/inventory.list', playbook: 'ansible/setup.yml')
       }

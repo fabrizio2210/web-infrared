@@ -31,7 +31,6 @@ pipeline {
         pip3 install --no-cache-dir -r src/requirements.txt'
         sh 'tar -cvf build.tar -C /tmp/build/ venv/; chown 1000:996 build.tar'
         archiveArtifacts artifacts: 'build.tar'
-        stash includes: 'build.tar', name: 'venv'
       }
     }
     stage('Test') {
@@ -48,7 +47,7 @@ pipeline {
           }
         }
         sh 'mkdir -p /tmp/build/ ; cp -rav * /tmp/build/ '
-        unstash 'venv'
+        copyArtifacts(projectName: 'web-infrare-pipeline')
         sh 'tar -xvf build.tar -C /tmp/build/'
         sh 'cd /tmp/build/; . /tmp/build/venv/bin/activate ; cd src; python3 tests/test-app.py'
         ansiblePlaybook(inventory: 'travis/inventory.list', playbook: 'ansible/setup.yml')

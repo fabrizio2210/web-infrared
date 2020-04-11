@@ -41,13 +41,13 @@ pipeline {
         }
       }
       steps {
+        copyArtifacts('web-infrare-pipeline')
         script {
           currentBuild.upstreamBuilds?.each { b ->
             echo b.getFullProjectName()
           }
         }
         sh 'mkdir -p /tmp/build/ ; cp -rav * /tmp/build/ '
-        copyArtifacts(projectName: 'web-infrare-pipeline')
         sh 'tar -xvf build.tar -C /tmp/build/'
         sh 'cd /tmp/build/; . /tmp/build/venv/bin/activate ; cd src; python3 tests/test-app.py'
         ansiblePlaybook(inventory: 'travis/inventory.list', playbook: 'ansible/setup.yml')

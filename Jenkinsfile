@@ -40,8 +40,8 @@ pipeline {
           args '-u root'
         }
       }
-      copyArtifacts('web-infrare-pipeline')
       steps {
+        copyArtifacts('web-infrare-pipeline')
         script {
           currentBuild.upstreamBuilds?.each { b ->
             echo b.getFullProjectName()

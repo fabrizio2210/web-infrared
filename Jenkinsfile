@@ -26,7 +26,7 @@ pipeline {
       steps {
         sh 'mkdir -p /tmp/build/ ; cp -rav * /tmp/build/ '
         sh 'cd /tmp/build/; \
-        python3 -m venv ; \
+        python3 -m venv /tmp/build/venv/ ; \
         pip3 install --no-cache-dir -r src/requirements.txt'
         archiveArtifacts artifacts: '/tmp/build/venv/'
       }

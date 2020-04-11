@@ -41,7 +41,10 @@ pipeline {
         }
       }
       steps {
-        copyArtifacts(env.JOB_NAME)
+        copyArtifacts(
+          projectName: env.JOB_NAME
+          selector: latestSavedBuild
+        )
         script {
           currentBuild.upstreamBuilds?.each { b ->
             echo b.getFullProjectName()

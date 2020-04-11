@@ -1,29 +1,20 @@
 pipeline {
-  agent {
-    docker {
-      image 'debian:stretch'
-      args '-u root'
-    }
+  agent { none }
   }
   stages {
+    stage('BuildDocker'){
+      when { changeset "**CICD/**" }
+      def controller = docker.build("fabrizio2210/web-infrared-controller:latest",  "CICD/Dockerfile.debian-stretch")
+      controller.push()
+    }
     stage('Build') {
       when { changeset "**src/**" }
       steps {
-        sh 'mkdir -p /tmp/build/ ; cp -rav * /tmp/build/ ; cd /tmp/build/'
-        sh 'apt-get update -y && apt-get install -y --no-install-recommends \
-            software-properties-common \
-            build-essential \
-            libffi-dev \
-            libssl-dev \
-            python3-dev \
-            python3-pip \
-            python3-wheel \
-            sudo \
-            git \
-            systemd \
-            && rm -rf /var/lib/apt/lists/*'
-        sh 'pip3 install --upgrade setuptools && pip3 install ansible'
-        sh 'pip3 install --no-cache-dir -r src/requirements.txt'
+        sh 'mkdir -p /tmp/build/ ; cp -rav * /tmp/build/ '
+        sh 'cd /tmp/build/; \
+        python3 -m venv ; \
+        pip3 install --no-cache-dir -r src/requirements.txt'
+        archiveArtifacts artifacts: '/tmp/build/venv/'
       }
     }
     stage('Test') {

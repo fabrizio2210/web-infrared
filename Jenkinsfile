@@ -50,7 +50,7 @@ pipeline {
         sh 'mkdir -p /tmp/build/ ; cp -rav * /tmp/build/ '
         unstash 'venv'
         sh 'tar -xvf build.tar -C /tmp/build/'
-        sh 'cd /tmp/build/; cd src; python3 tests/test-app.py; cd ..'
+        sh 'cd /tmp/build/; . /tmp/build/venv/bin/activate ; cd src; python3 tests/test-app.py'
         ansiblePlaybook(inventory: 'travis/inventory.list', playbook: 'ansible/setup.yml')
       }
     }

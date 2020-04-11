@@ -14,14 +14,14 @@ pipeline {
             build-essential \
             libffi-dev \
             libssl-dev \
-            python-dev \
-            python-pip \
+            python3-dev \
+            python3-pip \
             sudo \
             git \
             systemd \
             && rm -rf /var/lib/apt/lists/*'
-        sh 'pip install --upgrade setuptools && pip install ansible'
-        sh 'pip install --no-cache-dir -r src/requirements.txt'
+        sh 'pip3 install --upgrade setuptools && pip install ansible'
+        sh 'pip3 install --no-cache-dir -r src/requirements.txt'
       }
     }
     stage('Test') {

@@ -1,7 +1,7 @@
 pipeline {
   agent {
     docker {
-      image 'python:3.5'
+      image 'debian:stretch'
       args '-u root'
     }
   }
@@ -9,8 +9,19 @@ pipeline {
     stage('Build') {
       steps {
         sh 'mkdir -p /tmp/build/ ; cp -rav * /tmp/build/ ; cd /tmp/build/'
+        sh 'apt-get update -y && apt-get install -y --no-install-recommends \
+            software-properties-common \
+            build-essential \
+            libffi-dev \
+            libssl-dev \
+            python-dev \
+            python-pip \
+            sudo \
+            git \
+            systemd \
+            && rm -rf /var/lib/apt/lists/*'
+        sh 'pip install --upgrade setuptools && pip install ansible'
         sh 'pip install --no-cache-dir -r src/requirements.txt'
-        sh 'pip install ansible'
       }
     }
     stage('Test') {

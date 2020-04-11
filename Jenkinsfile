@@ -20,7 +20,7 @@ pipeline {
             git \
             systemd \
             && rm -rf /var/lib/apt/lists/*'
-        sh 'pip3 install --upgrade setuptools && pip install ansible'
+        sh 'pip3 install --upgrade setuptools && pip3 install ansible'
         sh 'pip3 install --no-cache-dir -r src/requirements.txt'
       }
     }

@@ -32,6 +32,12 @@ pipeline {
       }
     }
     stage('Test') {
+      agent {
+        docker { 
+          image 'fabrizio2210/web-infrared-controller' 
+          args '-u root'
+        }
+      }
       steps {
         sh 'cd /tmp/build/; cd src; python3 tests/test-app.py; cd ..'
         ansiblePlaybook(inventory: 'travis/inventory.list', playbook: 'ansible/setup.yml')

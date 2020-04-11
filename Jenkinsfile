@@ -1,5 +1,8 @@
 pipeline {
   agent any 
+  environment {
+    registryCredential = 'docker-login'
+  }
   stages {
     stage('BuildDocker'){
       when { changeset "**CICD/**" }
@@ -11,6 +14,12 @@ pipeline {
       }
     }
     stage('Build') {
+      agent {
+        docker { 
+          image 'fabrizio2210/web-infrared-controller' 
+          args '-u root'
+        }
+      }
       when { changeset "**src/**" }
       steps {
         sh 'mkdir -p /tmp/build/ ; cp -rav * /tmp/build/ '

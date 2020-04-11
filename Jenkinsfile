@@ -43,7 +43,7 @@ pipeline {
       steps {
         copyArtifacts(
           projectName: env.JOB_NAME,
-          selector: latestSavedBuild
+          selector: latestSavedBuild()
         )
         script {
           currentBuild.upstreamBuilds?.each { b ->

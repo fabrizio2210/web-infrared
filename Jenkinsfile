@@ -5,7 +5,7 @@ pipeline {
       when { changeset "**CICD/**" }
       steps {
         script {
-          def controller = docker.build("fabrizio2210/web-infrared-controller:latest",  "CICD/Dockerfile.debian-stretch")
+          def controller = docker.build("fabrizio2210/web-infrared-controller:latest",  "-f CICD/Dockerfile.debian-stretch .")
           controller.push()
         }
       }

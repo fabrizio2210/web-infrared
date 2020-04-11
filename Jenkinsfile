@@ -27,7 +27,7 @@ pipeline {
     }
     stage('Test') {
       steps {
-        sh 'cd /tmp/build/; cd src; python tests/test-app.py; cd ..'
+        sh 'cd /tmp/build/; cd src; python3 tests/test-app.py; cd ..'
         ansiblePlaybook(inventory: 'travis/inventory.list', playbook: 'ansible/setup.yml')
       }
     }

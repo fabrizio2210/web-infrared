@@ -42,7 +42,7 @@ pipeline {
       }
       steps {
         copyArtifacts(
-          projectName: env.JOB_NAME
+          projectName: env.JOB_NAME,
           selector: latestSavedBuild
         )
         script {

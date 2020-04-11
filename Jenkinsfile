@@ -7,6 +7,7 @@ pipeline {
   }
   stages {
     stage('Build') {
+      when { changeset "**src/**" }
       steps {
         sh 'mkdir -p /tmp/build/ ; cp -rav * /tmp/build/ ; cd /tmp/build/'
         sh 'apt-get update -y && apt-get install -y --no-install-recommends \

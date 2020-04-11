@@ -9,7 +9,9 @@ pipeline {
       steps {
         script {
           def controller = docker.build("fabrizio2210/web-infrared-controller:latest",  "-f CICD/Dockerfile.debian-stretch .")
-          controller.push()
+          docker.withRegistry( '', registryCredential ) {
+            controller.push()
+          }
         }
       }
     }

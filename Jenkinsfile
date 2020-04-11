@@ -3,9 +3,11 @@ pipeline {
   stages {
     stage('BuildDocker'){
       when { changeset "**CICD/**" }
-      script {
-        def controller = docker.build("fabrizio2210/web-infrared-controller:latest",  "CICD/Dockerfile.debian-stretch")
-        controller.push()
+      steps {
+        script {
+          def controller = docker.build("fabrizio2210/web-infrared-controller:latest",  "CICD/Dockerfile.debian-stretch")
+          controller.push()
+        }
       }
     }
     stage('Build') {

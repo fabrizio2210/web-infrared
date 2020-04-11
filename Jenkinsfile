@@ -41,7 +41,7 @@ pipeline {
         }
       }
       steps {
-        copyArtifacts('web-infrare-pipeline')
+        copyArtifacts(env.JOB_NAME)
         script {
           currentBuild.upstreamBuilds?.each { b ->
             echo b.getFullProjectName()

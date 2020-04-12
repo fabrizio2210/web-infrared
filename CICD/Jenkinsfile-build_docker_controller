@@ -1,0 +1,20 @@
+pipeline {
+  agent any 
+  environment {
+    registryCredential = 'docker-login'
+  }
+  stages {
+    stage('BuildDocker'){
+      when { changeset "**CICD/Dockerfile.*" }
+      steps {
+        script {
+          def controller = docker.build("fabrizio2210/web-infrared-controller:latest",  "-f CICD/Dockerfile.debian-stretch .")
+          docker.withRegistry( '', registryCredential ) {
+            controller.push()
+          }
+        }
+      }
+    }
+  }
+}
+

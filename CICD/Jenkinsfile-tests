@@ -1,0 +1,28 @@
+pipeline {
+  agent any 
+  stages {
+    stage('Test') {
+      agent {
+        docker { 
+          image 'fabrizio2210/web-infrared-controller' 
+          args '-u root'
+        }
+      }
+      steps {
+        copyArtifacts(
+          projectName: 'web-infrared-build_env'
+        )
+        script {
+          currentBuild.upstreamBuilds?.each { b ->
+            echo b.getFullProjectName()
+          }
+        }
+        sh 'mkdir -p /tmp/build/ ; cp -rav * /tmp/build/ '
+        sh 'tar -xvf env.tar -C /tmp/build/'
+        sh 'cd /tmp/build/; . /tmp/build/venv/bin/activate ; cd src; python3 tests/test-app.py'
+        ansiblePlaybook(inventory: 'travis/inventory.list', playbook: 'ansible/setup.yml')
+      }
+    }
+  }
+}
+

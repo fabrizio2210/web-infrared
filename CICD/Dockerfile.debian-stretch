@@ -15,6 +15,7 @@ RUN apt-get update -y && apt-get install -y --no-install-recommends \
     python-setuptools \
     libpcre3 \
     libpcre3-dev \
+    fakeroot \
     sudo \
     git \
     systemd \

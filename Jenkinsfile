@@ -55,22 +55,23 @@ pipeline {
           projectName: env.JOB_NAME,
           selector: lastWithArtifacts()
         )
-        sh 'mkdir -p opt/web-infrared/'
-				sh 'tar -xvf env.tar -C opt/web-infrared/'
-				sh 'cp -rav src/* opt/web-infrared/'
-        sh 'mkdir -p usr/share/locale/'
-        sh 'mkdir -p usr/share/doc/web-infrared/'
-        sh 'cp DEBIAN/copyright usr/share/doc/web-infrared/'
-        sh 'gzip -n9 DEBIAN/changelog'
-        sh 'cp DEBIAN/changelog.gz usr/share/doc/web-infrared/'
-        sh 'binarySize=$(du -cs usr/ opt/ | tail -1 | cut -f1); replaceString="s/__BINARY_SIZE__/"$binarySize"/"; sed -i $replaceString DEBIAN/control'
-        sh 'versionStr=$(cat VERSION); sed -i "s/__VERSION__/"${versionStr}"/" DEBIAN/control'
-        sh 'fakeroot tar czf data.tar.gz opt/ usr/'
-        dir('DEBIAN') {
-            sh 'fakeroot tar czf ../control.tar.gz control'
+        sh 'mkdir -p /tmp/build/ ; cp -rav * /tmp/build/ '
+        dir('/tmp/build/'){
+          sh 'mkdir -p opt/web-infrared/'
+				  sh 'tar -xvf env.tar -C opt/web-infrared/'
+				  sh 'cp -rav src/* opt/web-infrared/'
+          sh 'mkdir -p usr/share/locale/'
+          sh 'mkdir -p usr/share/doc/web-infrared/'
+          sh 'cp DEBIAN/copyright usr/share/doc/web-infrared/'
+          sh 'gzip -n9 DEBIAN/changelog'
+          sh 'cp DEBIAN/changelog.gz usr/share/doc/web-infrared/'
+          sh 'binarySize=$(du -cs usr/ opt/ | tail -1 | cut -f1); replaceString="s/__BINARY_SIZE__/"$binarySize"/"; sed -i $replaceString DEBIAN/control'
+          sh 'versionStr=$(cat VERSION); sed -i "s/__VERSION__/"${versionStr}"/" DEBIAN/control'
+          sh 'fakeroot tar czf data.tar.gz opt/ usr/'
+          sh 'cd DEBIAN; fakeroot tar czf ../control.tar.gz control'
+          sh 'echo 2.0 > debian-binary'
+          sh 'versionStr=$(cat VERSION);fakeroot ar r web-infrared-$versionStr.deb debian-binary control.tar.gz data.tar.gz'
         }
-        sh 'echo 2.0 > debian-binary'
-        sh 'versionStr=$(cat VERSION);fakeroot ar r web-infrared-$versionStr.deb debian-binary control.tar.gz data.tar.gz'
       }
       post {
         always {

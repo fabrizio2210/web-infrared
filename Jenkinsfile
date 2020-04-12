@@ -63,7 +63,7 @@ pipeline {
         sh 'cp DEBIAN/copyright usr/share/doc/web-infrared/'
         sh 'gzip -n9 DEBIAN/changelog'
         sh 'cp DEBIAN/changelog.gz usr/share/doc/web-infrared/'
-        sh 'binarySize=$(du -s usr/ | cut -f1); replaceString="s/__BINARY_SIZE__/"$binarySize"/"; sed -i $replaceString DEBIAN/control'
+        sh 'binarySize=$(du -cs usr/ opt/ | tail -1 | cut -f1); replaceString="s/__BINARY_SIZE__/"$binarySize"/"; sed -i $replaceString DEBIAN/control'
         sh 'versionStr=$(cat VERSION); sed -i "s/__VERSION__/"${versionStr}"/" DEBIAN/control'
         sh 'fakeroot tar czf data.tar.gz opt/ usr/'
         dir('DEBIAN') {

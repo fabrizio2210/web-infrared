@@ -32,7 +32,9 @@ pipeline {
         sh 'tar -cvf env.tar -C /tmp/build/ venv/; chown 1000:996 build.tar'
       }
       post {
-        archiveArtifacts artifacts: 'env.tar'
+        always {
+          archiveArtifacts artifacts: 'env.tar'
+        }
       }
     }
     stage('Test') {

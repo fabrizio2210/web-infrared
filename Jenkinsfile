@@ -42,7 +42,7 @@ pipeline {
       }
       steps {
         copyArtifacts(
-          projectName: env.JOB_NAME,
+          projectName: 'web-infrared-build',
           selector: latestSavedBuild()
         )
         script {

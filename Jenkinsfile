@@ -42,8 +42,7 @@ pipeline {
       }
       steps {
         copyArtifacts(
-          projectName: 'web-infrared-build',
-          selector: latestSavedBuild()
+          projectName: 'web-infrared-build'
         )
         script {
           currentBuild.upstreamBuilds?.each { b ->

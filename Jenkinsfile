@@ -70,6 +70,7 @@ pipeline {
         sh 'cd /tmp/build; cd DEBIAN; fakeroot tar czf ../control.tar.gz control'
         sh 'cd /tmp/build; echo 2.0 > debian-binary'
         sh 'cd /tmp/build; versionStr=$(cat VERSION);fakeroot ar r web-infrared-$versionStr.deb debian-binary control.tar.gz data.tar.gz'
+        sh 'mv /tmp/build/web-infrared-$(cat VERSION).deb .'
       }
       post {
         always {

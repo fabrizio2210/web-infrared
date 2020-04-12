@@ -5,7 +5,7 @@ pipeline {
   }
   stages {
     stage('BuildDocker'){
-      when { changeset "**CICD/**" }
+      when { changeset "**CICD/Dockerfile.*" }
       steps {
         script {
           def controller = docker.build("fabrizio2210/web-infrared-controller:latest",  "-f CICD/Dockerfile.debian-stretch .")
@@ -22,7 +22,7 @@ pipeline {
           args '-u root'
         }
       }
-      when { changeset "**src/**" }
+      when { changeset "**src/requirements.txt" }
       steps {
         sh 'mkdir -p /tmp/build/ ; cp -rav * /tmp/build/ '
         sh 'cd /tmp/build/; \
@@ -57,7 +57,7 @@ pipeline {
         sh 'mkdir -p /tmp/build/ ; cp -rav * /tmp/build/ '
         sh 'tar -xvf env.tar -C /tmp/build/'
         sh 'cd /tmp/build/; . /tmp/build/venv/bin/activate ; cd src; python3 tests/test-app.py'
-        ansiblePlaybook(inventory: 'travis/inventory.list', playbook: 'ansible/setup.yml')
+        ansiblePlaybook(inventory: 'CICD/inventory.list', playbook: 'ansible/setup.yml')
       }
     }
     stage('Deploy') {

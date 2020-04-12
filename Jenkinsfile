@@ -29,7 +29,7 @@ pipeline {
         python3 -m venv /tmp/build/venv/ ; \
         . /tmp/build/venv/bin/activate ; \
         pip3 install --no-cache-dir -r src/requirements.txt'
-        sh 'tar -cvf env.tar -C /tmp/build/ venv/; chown 1000:996 build.tar'
+        sh 'tar -cvf env.tar -C /tmp/build/ venv/; chown 1000:996 env.tar'
       }
       post {
         always {
@@ -46,7 +46,8 @@ pipeline {
       }
       steps {
         copyArtifacts(
-          projectName: env.JOB_NAME
+          projectName: env.JOB_NAME,
+          selector: lastWithArtifacts()
         )
         script {
           currentBuild.upstreamBuilds?.each { b ->

@@ -29,8 +29,10 @@ pipeline {
         python3 -m venv /tmp/build/venv/ ; \
         . /tmp/build/venv/bin/activate ; \
         pip3 install --no-cache-dir -r src/requirements.txt'
-        sh 'tar -cvf build.tar -C /tmp/build/ venv/; chown 1000:996 build.tar'
-        archiveArtifacts artifacts: 'build.tar'
+        sh 'tar -cvf env.tar -C /tmp/build/ venv/; chown 1000:996 build.tar'
+      }
+      post {
+        archiveArtifacts artifacts: 'env.tar'
       }
     }
     stage('Test') {
@@ -42,7 +44,7 @@ pipeline {
       }
       steps {
         copyArtifacts(
-          projectName: 'web-infrared-build'
+          projectName: env.JOB_NAME
         )
         script {
           currentBuild.upstreamBuilds?.each { b ->
@@ -50,7 +52,7 @@ pipeline {
           }
         }
         sh 'mkdir -p /tmp/build/ ; cp -rav * /tmp/build/ '
-        sh 'tar -xvf build.tar -C /tmp/build/'
+        sh 'tar -xvf env.tar -C /tmp/build/'
         sh 'cd /tmp/build/; . /tmp/build/venv/bin/activate ; cd src; python3 tests/test-app.py'
         ansiblePlaybook(inventory: 'travis/inventory.list', playbook: 'ansible/setup.yml')
       }

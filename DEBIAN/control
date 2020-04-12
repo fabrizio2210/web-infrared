@@ -1,0 +1,10 @@
+Package: web-infrared
+Version: __VERSION__
+Section: utils
+Priority: optional
+Architecture: armhf
+Installed-Size: __BINARY_SIZE__
+Maintainer: Fabrizio <fabrizio@mail.com>
+Homepage: https://github.com/fabrizio2210/web-infrared
+Depends: libc6
+Description: A web portal to use infrared remote control

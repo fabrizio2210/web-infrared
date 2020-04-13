@@ -2,9 +2,10 @@ pipeline {
   agent any 
   environment {
     registryCredential = 'docker-login'
-    buildDir = '/tmp/build/'
+    buildDir = '/tmp/build'
     venvPackage = 'venv.tar'
     prefixPackage = 'web-infrared'
+    installDir =  'opt/web-infrared'
   }
   stages {
   // Build a container that can be used among the pipeline
@@ -32,8 +33,8 @@ pipeline {
       steps {
         sh 'mkdir -p ${buildDir} ; cp -rav * ${buildDir} '
         sh 'cd ${buildDir}; \
-        python3 -m venv ${buildDir}venv/ ; \
-        . ${buildDir}venv/bin/activate ; \
+        python3 -m venv ${buildDir}/venv/ ; \
+        . ${buildDir}/venv/bin/activate ; \
         pip3 install --no-cache-dir -r src/requirements.txt'
         sh 'tar -cvf ${venvPackage} -C ${buildDir} venv/'
       }
@@ -63,9 +64,9 @@ pipeline {
           selector: lastWithArtifacts()
         )
         sh 'mkdir -p ${buildDir} ; cp -rav * ${buildDir} '
-        sh 'cd ${buildDir}; mkdir -p opt/web-infrared/'
-				sh 'cd ${buildDir}; tar -xvf ${venvPackage} -C opt/web-infrared/'
-				sh 'cd ${buildDir}; cp -rav src/* opt/web-infrared/'
+        sh 'cd ${buildDir}; mkdir -p installDir/'
+				sh 'cd ${buildDir}; tar -xvf ${venvPackage} -C installDir/'
+				sh 'cd ${buildDir}; cp -rav src/* installDir/'
         sh 'cd ${buildDir}; mkdir -p usr/share/locale/'
         sh 'cd ${buildDir}; mkdir -p usr/share/doc/web-infrared/'
         sh 'cd ${buildDir}; cp DEBIAN/copyright usr/share/doc/web-infrared/'
@@ -85,7 +86,7 @@ pipeline {
         }
       }
     }
-  // Do test against the Code
+  // Do test against the packet
     stage('TestCode') {
       agent {
         docker { 
@@ -99,9 +100,8 @@ pipeline {
           selector: lastWithArtifacts()
         )
         echo "${currentBuild.buildCauses}" // same as currentBuild.getBuildCauses()
-        sh 'mkdir -p ${buildDir} ; cp -rav * ${buildDir} '
-        sh 'tar -xvf ${venvPackage} -C ${buildDir}'
-        sh 'cd ${buildDir}; . ${buildDir}venv/bin/activate ; cd src; python3 tests/test-app.py'
+        sh 'dpkg -i ${prefixPackage}-*.deb'
+        sh 'cd /${installDir}; . /${installDir}/venv/bin/activate ; cd src; python3 tests/test-app.py'
       }
     }
   // Do tests of Ansible playbook against an empty container

@@ -26,7 +26,6 @@ pipeline {
       agent {
         docker { 
           image 'fabrizio2210/web-infrared-controller' 
-          args '-u root'
         }
       }
       when { changeset "**src/requirements.txt" }
@@ -36,11 +35,11 @@ pipeline {
         python3 -m venv ${buildDir}venv/ ; \
         . ${buildDir}venv/bin/activate ; \
         pip3 install --no-cache-dir -r src/requirements.txt'
-        sh 'tar -cvf env.tar -C ${buildDir} venv/; chown 1000:996 env.tar'
+        sh 'tar -cvf ${venvPackage} -C ${buildDir} venv/'
       }
       post {
         always {
-          archiveArtifacts artifacts: 'env.tar'
+          archiveArtifacts artifacts: venvPackage
         }
       }
     }
@@ -60,7 +59,7 @@ pipeline {
         )
         sh 'mkdir -p ${buildDir} ; cp -rav * ${buildDir} '
         sh 'cd ${buildDir}; mkdir -p opt/web-infrared/'
-				sh 'cd ${buildDir}; tar -xvf env.tar -C opt/web-infrared/'
+				sh 'cd ${buildDir}; tar -xvf ${venvPackage} -C opt/web-infrared/'
 				sh 'cd ${buildDir}; cp -rav src/* opt/web-infrared/'
         sh 'cd ${buildDir}; mkdir -p usr/share/locale/'
         sh 'cd ${buildDir}; mkdir -p usr/share/doc/web-infrared/'
@@ -95,7 +94,7 @@ pipeline {
           selector: lastWithArtifacts()
         )
         sh 'mkdir -p ${buildDir} ; cp -rav * ${buildDir} '
-        sh 'tar -xvf env.tar -C ${buildDir}'
+        sh 'tar -xvf ${venvPackage} -C ${buildDir}'
         sh 'cd ${buildDir}; . ${buildDir}venv/bin/activate ; cd src; python3 tests/test-app.py'
       }
     }

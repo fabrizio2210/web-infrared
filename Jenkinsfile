@@ -67,10 +67,9 @@ pipeline {
           selector: lastWithArtifacts()
         )
         sh 'mkdir -p ${buildDir} ; cp -rav * ${buildDir} '
-        sh 'cd ${buildDir}; mkdir -p installDir/'
-				sh 'cd ${buildDir}; tar -xvf ${venvPackage} -C installDir/'
-				sh 'cd ${buildDir}; cp -rav src/* installDir/'
-        sh 'cd ${buildDir}; mkdir -p usr/share/locale/'
+        sh 'cd ${buildDir}; mkdir -p ${installDir}/'
+				sh 'cd ${buildDir}; tar -xvf ${venvPackage} -C ${installDir}/'
+				sh 'cd ${buildDir}; cp -rav src/* ${installDir}/'
         sh 'cd ${buildDir}; mkdir -p usr/share/doc/web-infrared/'
         sh 'cd ${buildDir}; cp DEBIAN/copyright usr/share/doc/web-infrared/'
         sh 'cd ${buildDir}; gzip -n9 DEBIAN/changelog'

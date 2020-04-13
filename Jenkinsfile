@@ -82,6 +82,7 @@ pipeline {
           changeset debCondition
           triggeredBy cause: "UserIdCause", detail: "fabrizio"
         }
+        beforeAgent true
       }
       steps {
         unstash venvPackageStash

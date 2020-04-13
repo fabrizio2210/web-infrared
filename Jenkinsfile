@@ -15,7 +15,10 @@ pipeline {
   // Build a container that can be used among the pipeline
   // save it on Dockerhub
     stage('BuildDocker'){
-      when { changeset dockerCondition }
+      when { 
+        changeset dockerCondition
+        beforeAgent true
+      }
       steps {
         script {
           def controller = docker.build("fabrizio2210/web-infrared-controller:latest",  "-f CICD/Dockerfile.debian-stretch .")
@@ -34,7 +37,10 @@ pipeline {
           args '-u root'
         }
       }
-      when { changeset venvCondition }
+      when { 
+        changeset venvCondition 
+        beforeAgent true
+      }
       steps {
         sh 'mkdir -p /${installDir} ; cp -rav * /${installDir} '
         sh 'cd /${installDir}; \

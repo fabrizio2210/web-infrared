@@ -134,7 +134,7 @@ pipeline {
       agent {
         docker { 
           image 'fabrizio2210/web-infrared-controller' 
-          args '-u root'
+          args '-u root -e PATH=$PATH:/var/jenkins_home/bin'
         }
       }
       steps {

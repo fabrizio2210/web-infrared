@@ -114,11 +114,13 @@ pipeline {
         }
       }
       steps {
-        docker.image('debian:stretch').withRun() { c ->
-          docker.image('debian:stretch').inside("--link ${c.id}:target") {
-            sh 'sleep 1'
+        script {
+          docker.image('debian:stretch').withRun() { c ->
+            docker.image('debian:stretch').inside("--link ${c.id}:target") {
+              sh 'sleep 1'
+            }
+            ansiblePlaybook(inventory: 'CICD/inventory.list', playbook: 'ansible/setup.yml')
           }
-          ansiblePlaybook(inventory: 'CICD/inventory.list', playbook: 'ansible/setup.yml')
         }
         //TODO: insert infra test
       }

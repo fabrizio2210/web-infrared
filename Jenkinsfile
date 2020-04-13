@@ -80,7 +80,7 @@ pipeline {
         sh 'cd ${buildDir}; cd DEBIAN; fakeroot tar czf ../control.tar.gz control'
         sh 'cd ${buildDir}; echo 2.0 > debian-binary'
         sh 'cd ${buildDir}; versionStr=$(cat VERSION);fakeroot ar r ${prefixPackage}-$versionStr.deb debian-binary control.tar.gz data.tar.gz'
-        sh 'mv ${buildDir}${prefixPackage}-$(cat VERSION).deb .'
+        sh 'mv ${buildDir}/${prefixPackage}-$(cat VERSION).deb .'
       }
       post {
         always {

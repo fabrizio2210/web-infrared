@@ -71,12 +71,12 @@ pipeline {
         sh 'cd ${buildDir}; fakeroot tar czf data.tar.gz opt/ usr/'
         sh 'cd ${buildDir}; cd DEBIAN; fakeroot tar czf ../control.tar.gz control'
         sh 'cd ${buildDir}; echo 2.0 > debian-binary'
-        sh 'cd ${buildDir}; versionStr=$(cat VERSION);fakeroot ar r web-infrared-$versionStr.deb debian-binary control.tar.gz data.tar.gz'
-        sh 'mv ${buildDir}web-infrared-$(cat VERSION).deb .'
+        sh 'cd ${buildDir}; versionStr=$(cat VERSION);fakeroot ar r ${prefixPackage}-$versionStr.deb debian-binary control.tar.gz data.tar.gz'
+        sh 'mv ${buildDir}${prefixPackage}-$(cat VERSION).deb .'
       }
       post {
         always {
-          archiveArtifacts artifacts: 'web-infrared-*.deb'
+          archiveArtifacts artifacts: '${prefixPackage}-*.deb'
         }
       }
     }

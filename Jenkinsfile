@@ -131,16 +131,12 @@ pipeline {
     }
   // Do tests of Ansible playbook against an empty container
     stage('TestAnsible') {
-      agent {
-        docker { 
-          image 'fabrizio2210/web-infrared-controller' 
-          args '-u root -e PATH=$PATH:/var/jenkins_home/bin/'
-        }
-      }
       steps {
         script {
-          docker.image('fabrizio2210/web-infrared-controller').inside("--link ${env.NODE_NAME}:target"){ c ->
-            ansiblePlaybook(inventory: 'CICD/inventory.list', playbook: 'ansible/setup.yml')
+          docker.image('fabrizio2210/web-infrared-controller').withRun(){ c ->
+            docker.image('fabrizio2210/web-infrared-controller').inside("--link ${c.id}:target"){
+              ansiblePlaybook(inventory: 'CICD/inventory.list', playbook: 'ansible/setup.yml')
+            }
           }
         }
         //TODO: insert infra test

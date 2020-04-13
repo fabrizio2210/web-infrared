@@ -143,7 +143,7 @@ pipeline {
             sh 'hostname'
             echo '${c.id}'
             echo '$c'
-            sh 'sed -i -e "s/target/' + ${c.id} + '/" CICD/inventory.list"
+            sh 'sed -i -e "s/target/' + ${c.id} + '/" CICD/inventory.list'
             ansiblePlaybook(inventory: 'CICD/inventory.list', playbook: 'ansible/setup.yml')
           }
         }

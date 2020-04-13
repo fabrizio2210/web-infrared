@@ -27,6 +27,7 @@ pipeline {
       agent {
         docker { 
           image 'fabrizio2210/web-infrared-controller' 
+          args '-u root'
         }
       }
       when { changeset "**src/requirements.txt" }
@@ -36,7 +37,7 @@ pipeline {
         python3 -m venv /${installDir}/venv/ ; \
         . /${installDir}/venv/bin/activate ; \
         pip3 install --no-cache-dir -r src/requirements.txt'
-        sh 'tar -cvf ${venvPackage} -C /${installDir} venv/'
+        sh 'tar -cvf ${venvPackage} -C /${installDir} venv/; chown 1000:996 ${venvPackage}'
       }
       post {
         always {
@@ -113,7 +114,12 @@ pipeline {
         }
       }
       steps {
-        ansiblePlaybook(inventory: 'CICD/inventory.list', playbook: 'ansible/setup.yml')
+        docker.image('debian:stretch').withRun() { c ->
+          docker.image('debian:stretch').inside("--link ${c.id}:target") {
+            sh 'sleep 1'
+          }
+          ansiblePlaybook(inventory: 'CICD/inventory.list', playbook: 'ansible/setup.yml')
+        }
         //TODO: insert infra test
       }
     }

@@ -139,7 +139,7 @@ pipeline {
       }
       steps {
         script {
-          docker.image('debian:stretch').withRun('', 'tail -f /dev/null'){ c ->
+          docker.image('python:3.5-stretch').withRun('', 'tail -f /dev/null'){ c ->
             sh 'hostname'
             echo "${c.id}"
             echo "${c}"

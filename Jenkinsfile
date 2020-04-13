@@ -31,12 +31,12 @@ pipeline {
       }
       when { changeset "**src/requirements.txt" }
       steps {
-        sh 'mkdir -p ${buildDir} ; cp -rav * ${buildDir} '
-        sh 'cd ${buildDir}; \
-        python3 -m venv ${buildDir}/venv/ ; \
-        . ${buildDir}/venv/bin/activate ; \
+        sh 'mkdir -p /${installDir} ; cp -rav * /${installDir} '
+        sh 'cd /${installDir}; \
+        python3 -m venv /${installDir}/venv/ ; \
+        . /${installDir}/venv/bin/activate ; \
         pip3 install --no-cache-dir -r src/requirements.txt'
-        sh 'tar -cvf ${venvPackage} -C ${buildDir} venv/'
+        sh 'tar -cvf ${venvPackage} -C /${installDir} venv/'
       }
       post {
         always {

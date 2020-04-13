@@ -101,7 +101,7 @@ pipeline {
         )
         echo "${currentBuild.buildCauses}" // same as currentBuild.getBuildCauses()
         sh 'dpkg -i ${prefixPackage}-*.deb'
-        sh 'cd /${installDir}; . /${installDir}/venv/bin/activate ; cd src; python3 tests/test-app.py'
+        sh 'cd /${installDir}; . /${installDir}/venv/bin/activate ; python3 tests/test-app.py'
       }
     }
   // Do tests of Ansible playbook against an empty container

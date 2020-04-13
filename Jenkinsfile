@@ -6,12 +6,16 @@ pipeline {
     venvPackage = 'venv.tar'
     prefixPackage = 'web-infrared'
     installDir =  'opt/web-infrared'
+    dockerCondition = '**CICD/Dockerfile.*'
+    venvCondition = '**src/requirements.txt'
+    debCondition = '**src/**'
+    venvPackageStash = 'venv'
   }
   stages {
   // Build a container that can be used among the pipeline
   // save it on Dockerhub
     stage('BuildDocker'){
-      when { changeset "**CICD/Dockerfile.*" }
+      when { changeset dockerCondition }
       steps {
         script {
           def controller = docker.build("fabrizio2210/web-infrared-controller:latest",  "-f CICD/Dockerfile.debian-stretch .")
@@ -30,7 +34,7 @@ pipeline {
           args '-u root'
         }
       }
-      when { changeset "**src/requirements.txt" }
+      when { changeset venvCondition }
       steps {
         sh 'mkdir -p /${installDir} ; cp -rav * /${installDir} '
         sh 'cd /${installDir}; \
@@ -41,9 +45,22 @@ pipeline {
       }
       post {
         always {
+          stash includes: venvPackage, name: venvPackageStash
           archiveArtifacts artifacts: venvPackage
           cleanWs()
         }
+      }
+    }
+  // Collect venv from old archives
+    stage ('collectVenv'){
+      when { not { changeset venvCondition } }
+      steps {
+        copyArtifacts(
+          projectName: env.JOB_NAME,
+          filter: venvPackage,
+          selector: lastWithArtifacts()
+        )
+        stash includes: venvPackage, name: venvPackageStash
       }
     }
   // Create teh DEB package
@@ -56,16 +73,12 @@ pipeline {
       }
       when { 
         anyOf {
-          changeset "**src/**" 
+          changeset debCondition
           triggeredBy cause: "UserIdCause", detail: "fabrizio"
         }
       }
       steps {
-        copyArtifacts(
-          projectName: env.JOB_NAME,
-          filter: venvPackage,
-          selector: lastWithArtifacts()
-        )
+        unstash venvPackageStash
         sh 'mkdir -p ${buildDir} ; cp -rav * ${buildDir} '
         sh 'cd ${buildDir}; mkdir -p ${installDir}/'
 				sh 'cd ${buildDir}; tar -xvf ${venvPackage} -C ${installDir}/'

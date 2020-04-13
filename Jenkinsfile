@@ -131,16 +131,20 @@ pipeline {
     }
   // Do tests of Ansible playbook against an empty container
     stage('TestAnsible') {
+      agent {
+        docker { 
+          image 'fabrizio2210/web-infrared-controller' 
+          args '-u root'
+        }
+      }
       steps {
         script {
           docker.image('debian:stretch').withRun(){ c ->
             sh 'hostname'
-            sh 'echo ${c.id}'
-            sh 'echo $c'
-            docker.image('fabrizio2210/web-infrared-controller').inside("--link ${c.id}:db"){
-              sh 'echo ciao'
-              //ansiblePlaybook(inventory: 'CICD/inventory.list', playbook: 'ansible/setup.yml')
-            }
+            echo '${c.id}'
+            echo '$c'
+            sh 'sed -i -e "s/target/' + ${c.id} + '/" CICD/inventory.list"
+            ansiblePlaybook(inventory: 'CICD/inventory.list', playbook: 'ansible/setup.yml')
           }
         }
         //TODO: insert infra test

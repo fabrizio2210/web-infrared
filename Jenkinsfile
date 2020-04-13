@@ -51,7 +51,11 @@ pipeline {
           image 'fabrizio2210/web-infrared-controller' 
         }
       }
-      when { changeset "**src/**" }
+      when { 
+        anyof {
+          changeset "**src/**" 
+        }
+      }
       steps {
         copyArtifacts(
           projectName: env.JOB_NAME,
@@ -93,6 +97,9 @@ pipeline {
           projectName: env.JOB_NAME,
           selector: lastWithArtifacts()
         )
+        echo "${currentBuild.buildCauses}" // same as currentBuild.getBuildCauses()
+        echo "${currentBuild.getBuildCauses('hudson.model.Cause$UserCause')}"
+        echo "${currentBuild.getBuildCauses('hudson.triggers.TimerTrigger$TimerTriggerCause')}"
         sh 'mkdir -p ${buildDir} ; cp -rav * ${buildDir} '
         sh 'tar -xvf ${venvPackage} -C ${buildDir}'
         sh 'cd ${buildDir}; . ${buildDir}venv/bin/activate ; cd src; python3 tests/test-app.py'

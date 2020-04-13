@@ -133,7 +133,7 @@ pipeline {
     stage('TestAnsible') {
       steps {
         script {
-          docker.image('fabrizio2210/web-infrared-controller').withRun(){ c ->
+          docker.image('debian:stretch').withRun(){ c ->
             docker.image('fabrizio2210/web-infrared-controller').inside("--link ${c.id}:target"){
               sh 'echo ciao'
               //ansiblePlaybook(inventory: 'CICD/inventory.list', playbook: 'ansible/setup.yml')

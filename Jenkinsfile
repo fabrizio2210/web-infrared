@@ -134,6 +134,7 @@ pipeline {
       steps {
         script {
           docker.image('debian:stretch').withRun(){ c ->
+            sh 'sleep 1'
             docker.image('fabrizio2210/web-infrared-controller').inside("--link ${c.id}:target"){
               sh 'echo ciao'
               //ansiblePlaybook(inventory: 'CICD/inventory.list', playbook: 'ansible/setup.yml')

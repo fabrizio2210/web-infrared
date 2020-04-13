@@ -98,8 +98,10 @@ pipeline {
           selector: lastWithArtifacts()
         )
         echo "${currentBuild.buildCauses}" // same as currentBuild.getBuildCauses()
-        echo "${currentBuild.getBuildCauses('hudson.model.Cause$UserCause')}"
+        echo "${currentBuild.getBuildCauses('hudson.model.Cause$UserIdCause')}"
+        echo "${currentBuild.getBuildCauses('hudson.model.Cause$UserIdCause').userId}"
         echo "${currentBuild.getBuildCauses('hudson.triggers.TimerTrigger$TimerTriggerCause')}"
+        echo "${currentBuild.getBuildCauses('com.cloudbees.jenkins.GitHubPushCause')}"
         sh 'mkdir -p ${buildDir} ; cp -rav * ${buildDir} '
         sh 'tar -xvf ${venvPackage} -C ${buildDir}'
         sh 'cd ${buildDir}; . ${buildDir}venv/bin/activate ; cd src; python3 tests/test-app.py'

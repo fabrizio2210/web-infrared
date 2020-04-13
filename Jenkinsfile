@@ -52,7 +52,7 @@ pipeline {
         }
       }
       when { 
-        anyof {
+        anyOf {
           changeset "**src/**" 
         }
       }

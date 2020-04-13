@@ -82,7 +82,7 @@ pipeline {
       }
       post {
         always {
-          archiveArtifacts artifacts: '${prefixPackage}-*.deb'
+          archiveArtifacts artifacts: prefixPackage + '-*.deb'
         }
       }
     }

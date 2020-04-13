@@ -63,6 +63,7 @@ pipeline {
       steps {
         copyArtifacts(
           projectName: env.JOB_NAME,
+          filter: venvPackage,
           selector: lastWithArtifacts()
         )
         sh 'mkdir -p ${buildDir} ; cp -rav * ${buildDir} '
@@ -100,6 +101,7 @@ pipeline {
       steps {
         copyArtifacts(
           projectName: env.JOB_NAME,
+          filter: prefixPackage + '-*.deb',
           selector: lastWithArtifacts()
         )
         echo "${currentBuild.buildCauses}" // same as currentBuild.getBuildCauses()

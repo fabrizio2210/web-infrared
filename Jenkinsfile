@@ -139,7 +139,7 @@ pipeline {
       }
       steps {
         script {
-          docker.image('fabrizio2210/web-infrared-controller').inside("--link ${c.id}:target"){ c ->
+          docker.image('fabrizio2210/web-infrared-controller').inside("--link ${env.NODE_NAME}:target"){ c ->
             ansiblePlaybook(inventory: 'CICD/inventory.list', playbook: 'ansible/setup.yml')
           }
         }

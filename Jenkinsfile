@@ -42,6 +42,7 @@ pipeline {
       post {
         always {
           archiveArtifacts artifacts: venvPackage
+          cleanWs()
         }
       }
     }
@@ -84,6 +85,7 @@ pipeline {
       post {
         always {
           archiveArtifacts artifacts: prefixPackage + '-*.deb'
+          cleanWs()
         }
       }
     }

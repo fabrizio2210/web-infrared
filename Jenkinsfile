@@ -10,6 +10,7 @@ pipeline {
     venvCondition = '**src/requirements.txt'
     debCondition = '**src/**'
     debCondition2 = '**DEBIAN/**'
+    debPackageStash = 'deb'
     venvPackageStash = 'venv'
   }
   stages {
@@ -97,6 +98,7 @@ pipeline {
       }
       post {
         always {
+          stash includes: prefixPackage + '-*.deb', name: debPackageStash
           archiveArtifacts artifacts: prefixPackage + '-*.deb'
           archiveArtifacts artifacts: venvPackage
           cleanWs()
@@ -132,7 +134,7 @@ pipeline {
       }
       steps {
         script {
-          docker.image('python:3.5-stretch').withRun('', 'ln -s /bin/true /sbin/shutdown && tail -f /dev/null'){ c ->
+          docker.image('python:3.5-stretch').withRun('', 'ln -s /bin/true /sbin/shutdown \; tail -f /dev/null'){ c ->
             sh 'hostname'
             echo "${c.id}"
             sh 'sed -i -e "s/target/' + "${c.id}" + '/" CICD/inventory.list'

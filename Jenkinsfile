@@ -139,10 +139,9 @@ pipeline {
       }
       steps {
         script {
-          docker.image('python:3.5-stretch').withRun('', 'tail -f /dev/null'){ c ->
+          docker.image('python:3.5-stretch').withRun('', 'ln -s /bin/true /sbin/shutdown \&\& tail -f /dev/null'){ c ->
             sh 'hostname'
             echo "${c.id}"
-            echo "${c}"
             sh 'sed -i -e "s/target/' + "${c.id}" + '/" CICD/inventory.list'
             ansiblePlaybook(inventory: 'CICD/inventory.list', playbook: 'ansible/setup.yml')
           }

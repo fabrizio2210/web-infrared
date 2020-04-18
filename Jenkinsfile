@@ -9,6 +9,7 @@ pipeline {
     dockerCondition = '**CICD/Dockerfile.*'
     venvCondition = '**src/requirements.txt'
     debCondition = '**src/**'
+    debCondition2 = '**DEBIAN/**'
     venvPackageStash = 'venv'
   }
   stages {
@@ -80,6 +81,7 @@ pipeline {
       when { 
         anyOf {
           changeset debCondition
+          changeset debCondition2
           triggeredBy cause: "UserIdCause", detail: "fabrizio"
         }
         beforeAgent true

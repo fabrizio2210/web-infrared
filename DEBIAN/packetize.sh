@@ -30,6 +30,7 @@ shift $((OPTIND-1))
 oldPwd=$(pwd)
 # Move in build directory
 cd ${bDir}
+versionStr=$(cat VERSION)
 mkdir -p ${iDir}/
 tar -xvf ${venvPacket} -C ${iDir}/
 cp -rav src/* ${iDir}/
@@ -38,11 +39,11 @@ cp DEBIAN/copyright usr/share/doc/${prefixPacket}/
 gzip -n9 DEBIAN/changelog
 cp DEBIAN/changelog.gz usr/share/doc/${prefixPacket}/
 binarySize=$(du -cs usr/ opt/ | tail -1 | cut -f1); replaceString="s/__BINARY_SIZE__/"$binarySize"/"; sed -i $replaceString DEBIAN/control
-versionStr=$(cat VERSION); sed -i "s/__VERSION__/"${versionStr}"/" DEBIAN/control
-fakeroot tar czf data.tar.gz opt/ usr/
-cd DEBIAN; fakeroot tar czf ../control.tar.gz control
+sed -i "s/__VERSION__/"${versionStr}"/" DEBIAN/control
+fakeroot tar -czf data.tar.gz opt/ usr/
+fakeroot tar -C DEBIAN -czf control.tar.gz control
 echo 2.0 > debian-binary
-versionStr=$(cat VERSION);fakeroot ar r ${prefixPacket}-${versionStr}.deb debian-binary control.tar.gz data.tar.gz
+fakeroot ar r ${prefixPacket}-${versionStr}.deb debian-binary control.tar.gz data.tar.gz
 
 # Return back to original directory
 cd $oldPwd

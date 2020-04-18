@@ -1,5 +1,5 @@
 #!/bin/bash
-
+set -x
 # ./packetize.sh -b BUILD_DIR -i INSTALL_DIR -p VENV_PACKAGE -o OUTPUT_PACKAGE -f PREFIX
 
 while getopts "b:i:p:o:f:" o; do
@@ -47,4 +47,4 @@ fakeroot ar r ${prefixPacket}-${versionStr}.deb debian-binary control.tar.gz dat
 
 # Return back to original directory
 cd $oldPwd
-mv ${bDir}/${prefixPacket}-$(cat VERSION).deb $outPacket
+mv ${bDir}/${prefixPacket}-${versionStr}.deb $outPacket

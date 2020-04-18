@@ -87,20 +87,11 @@ pipeline {
       steps {
         unstash venvPackageStash
         sh 'mkdir -p ${buildDir} ; cp -rav * ${buildDir} '
-        sh 'cd ${buildDir}; mkdir -p ${installDir}/'
-				sh 'cd ${buildDir}; tar -xvf ${venvPackage} -C ${installDir}/'
-				sh 'cd ${buildDir}; cp -rav src/* ${installDir}/'
-        sh 'cd ${buildDir}; mkdir -p usr/share/doc/web-infrared/'
-        sh 'cd ${buildDir}; cp DEBIAN/copyright usr/share/doc/web-infrared/'
-        sh 'cd ${buildDir}; gzip -n9 DEBIAN/changelog'
-        sh 'cd ${buildDir}; cp DEBIAN/changelog.gz usr/share/doc/web-infrared/'
-        sh 'cd ${buildDir}; binarySize=$(du -cs usr/ opt/ | tail -1 | cut -f1); replaceString="s/__BINARY_SIZE__/"$binarySize"/"; sed -i $replaceString DEBIAN/control'
-        sh 'cd ${buildDir}; versionStr=$(cat VERSION); sed -i "s/__VERSION__/"${versionStr}"/" DEBIAN/control'
-        sh 'cd ${buildDir}; fakeroot tar czf data.tar.gz opt/ usr/'
-        sh 'cd ${buildDir}; cd DEBIAN; fakeroot tar czf ../control.tar.gz control'
-        sh 'cd ${buildDir}; echo 2.0 > debian-binary'
-        sh 'cd ${buildDir}; versionStr=$(cat VERSION);fakeroot ar r ${prefixPackage}-$versionStr.deb debian-binary control.tar.gz data.tar.gz'
-        sh 'mv ${buildDir}/${prefixPackage}-$(cat VERSION).deb .'
+        sh 'DEBIAN/packetize.sh -b ${buildDir} \
+                                -i ${installDir} \
+                                -p ${venvPackage} \
+                                -o . \
+                                -f ${prefixPackage}'
       }
       post {
         always {
@@ -124,7 +115,7 @@ pipeline {
           filter: prefixPackage + '-*.deb',
           selector: lastWithArtifacts()
         )
-        echo "${currentBuild.buildCauses}" // same as currentBuild.getBuildCauses()
+        echo "${currentBuild.buildCauses}" // Display who is triggering
         sh 'dpkg -i ${prefixPackage}-*.deb'
         sh 'cd /${installDir}; . /${installDir}/venv/bin/activate ; python3 tests/test-app.py'
       }
@@ -139,7 +130,7 @@ pipeline {
       }
       steps {
         script {
-          docker.image('python:3.5-stretch').withRun('', 'ln -s /bin/true /sbin/shutdown \&\& tail -f /dev/null'){ c ->
+          docker.image('python:3.5-stretch').withRun('', 'ln -s /bin/true /sbin/shutdown && tail -f /dev/null'){ c ->
             sh 'hostname'
             echo "${c.id}"
             sh 'sed -i -e "s/target/' + "${c.id}" + '/" CICD/inventory.list'

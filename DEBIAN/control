@@ -2,7 +2,7 @@ Package: web-infrared
 Version: __VERSION__
 Section: utils
 Priority: optional
-Architecture: armhf
+Architecture: __ARCHITECTURE__
 Installed-Size: __BINARY_SIZE__
 Maintainer: Fabrizio <fabrizio@mail.com>
 Homepage: https://github.com/fabrizio2210/web-infrared

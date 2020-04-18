@@ -1,5 +1,4 @@
 ---
 - import_playbook: lib/setInfrared.yml
-- import_playbook: lib/deployApp.yml
-- import_playbook: lib/setApp.yml
+- import_playbook: lib/deployDeb.yml
 - import_playbook: lib/setWebserver.yml

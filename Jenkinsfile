@@ -44,12 +44,11 @@ pipeline {
         beforeAgent true
       }
       steps {
-        sh 'mkdir -p /${installDir} ; cp -rav * /${installDir} '
-        sh 'cd /${installDir}; \
-        python3 -m venv /${installDir}/venv/ ; \
-        . /${installDir}/venv/bin/activate ; \
-        pip3 install --no-cache-dir -r src/requirements.txt'
-        sh 'tar -cvf ${venvPackage} -C /${installDir} venv/; chown 1000:996 ${venvPackage}'
+        sh 'mkdir -p ${buildDir} ; cp -rav * ${buildDir} '
+        sh 'DEBIAN/venvCreation.sh -b ${buildDir} \
+                                   -i /${installDir} \
+                                   -o ${venvPackage}'
+        sh 'chown 1000:996 ${venvPackage}'
       }
       post {
         always {

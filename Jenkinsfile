@@ -157,7 +157,7 @@ pipeline {
             sh 'hostname'
             echo "${c.id}"
             sh 'sed -i -e "s/target/' + "${c.id}" + '/" CICD/inventory.list'
-            ansiblePlaybook(inventory: 'CICD/inventory.list', playbook: 'ansible/setup.yml', extras: '-e src_dir="."')
+            ansiblePlaybook(inventory: 'CICD/inventory.list', playbook: 'ansible/setup.yml', extras: '-e src_dir=' + env.WORKSPACE )
           }
         }
         //TODO: insert infra test

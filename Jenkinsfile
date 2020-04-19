@@ -6,12 +6,14 @@ pipeline {
     venvPackage = 'venv.tar'
     prefixPackage = 'web-infrared'
     installDir =  'opt/web-infrared'
-    dockerCondition = '**CICD/Dockerfile.*'
+    dockerCondition = '**CICD/Dockerfile*'
     venvCondition = '**src/requirements.txt'
     debCondition = '**src/**'
     debCondition2 = '**DEBIAN/**'
     debPackageStash = 'deb'
     venvPackageStash = 'venv'
+    controllerImage = 'web-infrared-controller'
+    targetImage = 'web-infrared-target'
   }
   stages {
   // Build a container that can be used among the pipeline
@@ -23,9 +25,11 @@ pipeline {
       }
       steps {
         script {
-          def controller = docker.build("fabrizio2210/web-infrared-controller:latest",  "-f CICD/Dockerfile.debian-stretch .")
+          def controller = docker.build('fabrizio2210/' + controllerImage + ':latest',  '-f CICD/Dockerfile-' + controllerImage + '.debian-stretch .')
+          def target = docker.build('fabrizio2210/' + targetImage + ':latest',  '-f CICD/Dockerfile-' + targetImage + '.debian-stretch .')
           docker.withRegistry( '', registryCredential ) {
             controller.push()
+            target.push()
           }
         }
       }
@@ -35,7 +39,7 @@ pipeline {
     stage('BuildVenv') {
       agent {
         docker { 
-          image 'fabrizio2210/web-infrared-controller' 
+          image 'fabrizio2210/' + controllerImage 
           args '-u root'
         }
       }
@@ -78,7 +82,7 @@ pipeline {
     stage('BuildDEB') {
       agent {
         docker { 
-          image 'fabrizio2210/web-infrared-controller' 
+          image 'fabrizio2210/' + controllerImage 
         }
       }
       when { 
@@ -131,7 +135,7 @@ pipeline {
     stage('TestCode') {
       agent {
         docker { 
-          image 'fabrizio2210/web-infrared-controller' 
+          image 'fabrizio2210/' + controllerImage 
           args '-u root'
         }
       }
@@ -146,14 +150,14 @@ pipeline {
     stage('TestAnsible') {
       agent {
         docker { 
-          image 'fabrizio2210/web-infrared-controller' 
+          image 'fabrizio2210/' + controllerImage 
           args '-u root -e PATH=$PATH:/var/jenkins_home/bin'
         }
       }
       steps {
         unstash debPackageStash
         script {
-          docker.image('python:3.5-stretch').withRun('', 'tail -f /dev/null'){ c ->
+          docker.image('fabrizio2210/' + targetImage).withRun('', 'tail -f /dev/null'){ c ->
             sh 'hostname'
             echo "${c.id}"
             sh 'sed -i -e "s/target/' + "${c.id}" + '/" CICD/inventory.list'

@@ -157,7 +157,7 @@ pipeline {
       steps {
         unstash debPackageStash
         script {
-          docker.image('fabrizio2210/' + targetImage).withRun('','/bin/systemd'){ c ->
+          docker.image('fabrizio2210/' + targetImage).withRun('','tail -f /dev/null'){ c ->
             sh 'hostname'
             echo "${c.id}"
             sh 'sed -i -e "s/target/' + "${c.id}" + '/" CICD/inventory.list'

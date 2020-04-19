@@ -1,6 +1,7 @@
 ---
 - hosts: webserver
   become: true
+  gather_facts: no
   vars:
     log_folder: /var/log/web-infrared
     app_folder: /opt/web-infrared

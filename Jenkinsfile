@@ -138,7 +138,7 @@ pipeline {
       steps {
         unstash debPackageStash
         echo "${currentBuild.buildCauses}" // Display who is triggering
-        sh 'dpkg -i ${prefixPackage}-*.deb'
+        sh 'apt-get install ${prefixPackage}-*.deb'
         sh 'cd /${installDir}; . /${installDir}/venv/bin/activate ; python3 tests/test-app.py'
       }
     }

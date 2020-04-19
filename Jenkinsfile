@@ -60,7 +60,10 @@ pipeline {
     }
   // Collect venv from old archives
     stage ('collectVenv'){
-      when { not { changeset venvCondition } }
+      when { 
+        not { changeset venvCondition } 
+        beforeAgent true
+      }
       steps {
         copyArtifacts(
           projectName: env.JOB_NAME,
@@ -104,6 +107,26 @@ pipeline {
         }
       }
     }
+  // Collect Deb from old archives
+    stage ('collectDeb'){
+      when { 
+        not { 
+          anyOf {
+            changeset debCondition
+            changeset debCondition2
+          }
+        }
+        beforeAgent true
+      }
+      steps {
+        copyArtifacts(
+          projectName: env.JOB_NAME,
+          filter: prefixPackage + '-*.deb',
+          selector: lastWithArtifacts()
+        )
+        stash includes: prefixPackage + '-*.deb', name: debPackageStash
+      }
+    }
   // Do test against the packet
     stage('TestCode') {
       agent {
@@ -113,11 +136,7 @@ pipeline {
         }
       }
       steps {
-        copyArtifacts(
-          projectName: env.JOB_NAME,
-          filter: prefixPackage + '-*.deb',
-          selector: lastWithArtifacts()
-        )
+        unstash debPackageStash
         echo "${currentBuild.buildCauses}" // Display who is triggering
         sh 'dpkg -i ${prefixPackage}-*.deb'
         sh 'cd /${installDir}; . /${installDir}/venv/bin/activate ; python3 tests/test-app.py'

@@ -6,5 +6,5 @@ Architecture: __ARCHITECTURE__
 Installed-Size: __BINARY_SIZE__
 Maintainer: Fabrizio <fabrizio@mail.com>
 Homepage: https://github.com/fabrizio2210/web-infrared
-Depends: libc6, libpython3.5, systemd
+Depends: libc6, libpython3.5, systemd, systemd-sysv
 Description: A web portal to use infrared remote control

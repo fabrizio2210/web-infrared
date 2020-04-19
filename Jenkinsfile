@@ -151,6 +151,7 @@ pipeline {
         }
       }
       steps {
+        unstash debPackageStash
         script {
           docker.image('python:3.5-stretch').withRun('', 'tail -f /dev/null'){ c ->
             sh 'hostname'

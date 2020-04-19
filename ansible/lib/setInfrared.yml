@@ -54,7 +54,7 @@
   handlers:
     - name: reboot
       reboot:
-      when: inventory_hostname != 'localhost'
+      when: inventory_hostname != 'container'
     - name: restart lircd
       service:
         name: lircd

@@ -13,6 +13,8 @@
       apt:
         package: nginx
         state: present
+        update_cache: yes
+        cache_valid_time: 3600
     - name: create log folder
       file:
         path: "{{ log_folder }}"
@@ -59,6 +61,8 @@
       apt:
         package: nginx
         state: present
+        update_cache: yes
+        cache_valid_time: 3600
     - name: Configure nginx site
       template: 
         src: web-infrared-site.conf.j2

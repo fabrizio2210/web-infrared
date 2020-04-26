@@ -6,6 +6,8 @@
       apt:
         name: "{{ web_packages }}"
         state: present
+        update_cache: yes
+        cache_valid_time: 3600
       vars:
         web_packages:
         - python3.5

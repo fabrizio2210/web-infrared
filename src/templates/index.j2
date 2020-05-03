@@ -1,12 +1,13 @@
 <html>
     <head>
         <title>{{ title }}</title>
+        <link rel="stylesheet" type="text/css" href="/css/stylesheet.css" >
     </head>
     <body>
-        <ul>
-        {%for device in devices %}
-        <li><a href=/device/{{ device['name'] }}/web >{{ device['name'] }}</a></li>
-        {% endfor %}
-        </ul>
+        <div align="center">
+          {%for device in devices %}
+          <a class="button" href=/device/{{ device['name'] }}/web >{{ device['name'] }}</a></br>
+          {% endfor %}
+        </div>
     </body>
 </html>

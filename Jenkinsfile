@@ -162,7 +162,7 @@ pipeline {
             echo "${c.id}"
             sh 'sed -i -e "s/target/' + "${c.id}" + '/" CICD/inventory.list'
             ansiblePlaybook(inventory: 'CICD/inventory.list', playbook: 'ansible/setup.yml', extras: '-e src_dir=' + env.WORKSPACE )
-            sh 'docker exec -ti ' + "${c.id}" + ' /bin/bash -c "cd /${installDir}; . /${installDir}/venv/bin/activate ; python3 tests/test-infra.py"'
+            sh 'docker exec ' + "${c.id}" + ' /bin/bash -c "cd /${installDir}; . /${installDir}/venv/bin/activate ; python3 tests/test-infra.py"'
           }
         }
       }

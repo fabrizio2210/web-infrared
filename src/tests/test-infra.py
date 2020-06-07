@@ -8,7 +8,7 @@ import app
 
 class TestINFRA(unittest.TestCase):
     def setUp(self):
-        self.host = testinfra.get_host("local://", sudo=True)
+        self.host = testinfra.get_host("local://", sudo=False)
 
     def test_lirc_package(self):
         lirc = self.host.package("lirc")

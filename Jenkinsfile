@@ -167,16 +167,10 @@ pipeline {
         }
       }
     }
-  // Deploy the configuration with Ansible
+  // Deploy the configuration and DEB with Ansible
     stage('DeployConfiguration') {
       steps {
-        sh 'pwd'
-      }
-    }
-  // Deploy the DEB package
-    stage('DeployDEB') {
-      steps {
-        sh 'pwd'
+        ansiblePlaybook(credentialsId: 'id_oss_deploy', inventory: 'ansible/hosts.list', playbook: 'ansible/setup.yml', extras: '-e src_dir=' + env.WORKSPACE )
       }
     }
   }

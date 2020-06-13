@@ -178,7 +178,6 @@ pipeline {
       steps {
         unstash debPackageStash
         ansiblePlaybook(credentialsId: 'id_oss_deploy', inventory: 'ansible/hosts.list', playbook: 'ansible/setup.yml', extras: '-e src_dir=' + env.WORKSPACE )
-        }
       }
     }
   }

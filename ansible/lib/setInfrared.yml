@@ -9,28 +9,54 @@
         state: present
         update_cache: yes
         cache_valid_time: 3600
+
     - name: Insert boot configuration
       lineinfile:
         path: /boot/config.txt
-        line: "dtoverlay=lirc-rpi,gpio_in_pin=18,gpio_out_pin=17"
-        regexp: '^dtoverlay='
+        line: "dtoverlay=gpio-ir,gpio_pin=18"
         create: yes
       notify: reboot
-    - name: Enable module lirc_dev
+
+    - name: Insert boot configuration
       lineinfile:
-        path: /etc/modules
-        line: "lirc_dev"
+        path: /boot/config.txt
+        line: "dtoverlay=gpio-ir-tx,gpio_pin=17"
         create: yes
       notify: reboot
-    - name: Enable module lirc_rpi
-      lineinfile:
-        path: /etc/modules
-        line: "lirc_rpi gpio_in_pin=18 gpio_out_pin=17"
-      notify: reboot
+
+#    - name: Insert boot configuration
+#      lineinfile:
+#        path: /boot/config.txt
+#        line: "dtoverlay=lirc-rpi,gpio_in_pin=18,gpio_out_pin=17"
+#        regexp: '^dtoverlay='
+#        create: yes
+#      notify: reboot
+#    - name: Enable module lirc_dev
+#      lineinfile:
+#        path: /etc/modules
+#        line: "lirc_dev"
+#        create: yes
+#      notify: reboot
+#    - name: Enable module lirc_rpi
+#      lineinfile:
+#        path: /etc/modules
+#        line: "lirc_rpi gpio_in_pin=18 gpio_out_pin=17"
+#      notify: reboot
+
 # COnfigurazione con kernel 4.19.66+
-#dtoverlay=gpio-ir,gpio_pin=18
-#dtoverlay=gpio-ir-tx,gpio_pin=17
 # https://github.com/raspberrypi/linux/issues/2993
+    - name: Enable module gpio-ir-tx
+      lineinfile:
+        path: /etc/modules
+        line: "gpio-ir-tx"
+        create: yes
+      notify: reboot
+
+    - name: Enable module gpio-ir
+      lineinfile:
+        path: /etc/modules
+        line: "gpio-ir,gpio_pin=18"
+      notify: reboot
 
     - name: Point directory of configuration
       lineinfile:

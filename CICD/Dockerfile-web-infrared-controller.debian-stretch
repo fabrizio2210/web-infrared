@@ -17,6 +17,7 @@ RUN apt-get update -y && apt-get install -y --no-install-recommends \
     libpcre3-dev \
     fakeroot \
     sudo \
+    ssh \
     git \
     systemd \
  && rm -rf /var/lib/apt/lists/*

@@ -169,8 +169,16 @@ pipeline {
     }
   // Deploy the configuration and DEB with Ansible
     stage('DeployConfiguration') {
+      agent {
+        docker { 
+          image 'fabrizio2210/' + controllerImage 
+          args '-u root -e PATH=$PATH:/var/jenkins_home/bin'
+        }
+      }
       steps {
+        unstash debPackageStash
         ansiblePlaybook(credentialsId: 'id_oss_deploy', inventory: 'ansible/hosts.list', playbook: 'ansible/setup.yml', extras: '-e src_dir=' + env.WORKSPACE )
+        }
       }
     }
   }

@@ -88,4 +88,3 @@
       service:
         name: lircd
         state: restarted
-

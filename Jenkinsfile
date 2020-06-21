@@ -121,6 +121,7 @@ pipeline {
         beforeAgent true
       }
       steps {
+        sh 'rm ${prefixPackage}*.deb || /bin/true '
         copyArtifacts(
           projectName: env.JOB_NAME,
           filter: prefixPackage + '-*.deb',

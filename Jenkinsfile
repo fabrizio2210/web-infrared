@@ -38,10 +38,7 @@ pipeline {
   // Save it for reuse
     stage('BuildVenv') {
       agent {
-        docker { 
-          image 'fabrizio2210/' + controllerImage 
-          args '-u root'
-        }
+        label 'armv6l'
       }
       when { 
         changeset venvCondition 

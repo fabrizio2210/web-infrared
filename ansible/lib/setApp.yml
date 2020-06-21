@@ -24,4 +24,3 @@
         requirements: /opt/web-infrared/requirements.txt
         virtualenv: /opt/web-infrared/venv
         virtualenv_command: /usr/bin/python3.5 -m venv
-  

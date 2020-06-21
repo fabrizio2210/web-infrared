@@ -139,6 +139,7 @@ pipeline {
         }
       }
       steps {
+        sh 'rm ${prefixPackage}*.deb || /bin/true '
         unstash debPackageStash
         echo "${currentBuild.buildCauses}" // Display who is triggering
         sh 'dpkg -i ./${prefixPackage}-*.deb'
@@ -154,6 +155,7 @@ pipeline {
         }
       }
       steps {
+        sh 'rm ${prefixPackage}*.deb || /bin/true '
         unstash debPackageStash
         script {
           docker.image('fabrizio2210/' + targetImage).withRun('--privileged -v /sys/fs/cgroup:/sys/fs/cgroup:ro'){ c ->
@@ -175,6 +177,7 @@ pipeline {
         }
       }
       steps {
+        sh 'rm ${prefixPackage}*.deb || /bin/true '
         unstash debPackageStash
         ansiblePlaybook(credentialsId: 'id_oss_deploy', inventory: 'ansible/hosts.list', playbook: 'ansible/setup.yml', extras: '-e src_dir=' + env.WORKSPACE )
       }

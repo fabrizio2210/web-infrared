@@ -55,7 +55,7 @@
     - name: Enable module gpio-ir
       lineinfile:
         path: /etc/modules
-        line: "gpio-ir,gpio_pin=18"
+        line: "gpio-ir gpio_pin=18"
       notify: reboot
 
     - name: Point directory of configuration

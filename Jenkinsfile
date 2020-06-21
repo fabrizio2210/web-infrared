@@ -49,7 +49,7 @@ pipeline {
         sh 'DEBIAN/venvCreation.sh -b ${buildDir} \
                                    -i /${installDir} \
                                    -o ${venvPackage}'
-        sh 'chown 1000:996 ${venvPackage}'
+        sh 'chown jenkins ${venvPackage}'
       }
       post {
         always {

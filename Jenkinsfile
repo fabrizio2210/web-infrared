@@ -74,7 +74,7 @@ pipeline {
         stash includes: venvPackage, name: venvPackageStash
       }
     }
-  // Create teh DEB package
+  // Create the DEB package
   // Save it for the delivery
     stage('BuildDEB') {
       agent {
@@ -92,6 +92,7 @@ pipeline {
       }
       steps {
         unstash venvPackageStash
+        sh 'rm ${prefixPackage}*.deb || /bin/true '
         sh 'mkdir -p ${buildDir} ; cp -rav * ${buildDir} '
         sh 'DEBIAN/packetize.sh -b ${buildDir} \
                                 -i ${installDir} \

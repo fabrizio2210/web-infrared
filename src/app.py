@@ -19,6 +19,7 @@ app.add_url_rule('/', view_func=web_remote.index)
 app.add_url_rule('/device/<string:name>/web', view_func=web_remote.get_remote_control_device)
 # Static, TODO: move on nginx
 app.add_url_rule('/css/stylesheet.css', view_func=web_remote.get_stylesheet)
+app.add_url_rule('/images/favicon.png', view_func=web_remote.get_favicon)
 
 if __name__ == '__main__':
 # Get own IP

@@ -11,3 +11,6 @@ def get_remote_control_device(name):
 
 def get_stylesheet():
   return send_file('files/stylesheet.css')
+
+def get_favicon():
+  return send_file('files/favicon.png')

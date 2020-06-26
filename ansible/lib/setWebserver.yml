@@ -48,7 +48,7 @@
         dest: "{{ etc_folder}}/uwsgi.ini"
         mode: 0644
         owner: root
-      notify: uwsgi restart
+      notify: uwsgi reload
     - name: start uwsgi
       service:
         name: uwsgi-web-infrared
@@ -93,6 +93,10 @@
   handlers:
     - name: systemd reload
       command: systemctl daemon-reload
+    - name: uwsgi reload
+      service:
+        name: uwsgi-web-infrared
+        state: reloaded
     - name: uwsgi restart
       service:
         name: uwsgi-web-infrared

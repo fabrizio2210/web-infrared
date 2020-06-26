@@ -24,8 +24,9 @@
     </head>
     <body>
         <div align="center">
+        <a class="button"  href=/ >&#x1f519</a></br>
         {% for key in device['keys']|list|sort(attribute='name') %}
-        <a class="button" onclick="function_{{ key['name'] }}()">{{ key['name'] }}</a> </br>
+        <a class="button" onclick="function_{{ key['name'] }}()">{{ key['name'] }}</a></br>
         {% endfor %}
         </div>
     </body>

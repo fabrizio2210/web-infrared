@@ -3,7 +3,7 @@ from models.device import DeviceModel
 from models import remote_control
 
 def index():
-  return render_template('index.j2', title='Home', devices=remote_control.get_devices())
+  return render_template('index.j2', title='Infrarosso', devices=remote_control.get_devices())
 
 def get_remote_control_device(name):
   device = DeviceModel.find_by_name(name)

@@ -162,7 +162,7 @@ pipeline {
             sh 'hostname'
             echo "${c.id}"
             sh 'sed -i -e "s/target/' + "${c.id}" + '/" CICD/inventory.list'
-            ansiblePlaybook(inventory: 'CICD/inventory.list', playbook: 'ansible/setup.yml', extras: '-e src_dir=' + env.WORKSPACE )
+            ansiblePlaybook(inventory: 'CICD/inventory.list', playbook: 'ansible/setup.yml', extras: '-e src_folder=' + env.WORKSPACE )
             sh 'docker exec ' + "${c.id}" + ' /bin/bash -c "cd /${installDir}; . /${installDir}/venv/bin/activate ; python3 tests/test-infra.py"'
           }
         }
@@ -179,7 +179,7 @@ pipeline {
       steps {
         sh 'rm ${prefixPackage}*.deb || /bin/true '
         unstash debPackageStash
-        ansiblePlaybook(credentialsId: 'id_oss_deploy', inventory: 'ansible/hosts.list', playbook: 'ansible/setup.yml', extras: '-e src_dir=' + env.WORKSPACE )
+        ansiblePlaybook(credentialsId: 'id_oss_deploy', inventory: 'ansible/hosts.list', playbook: 'ansible/setup.yml', extras: '-e src_folder=' + env.WORKSPACE )
       }
     }
   }

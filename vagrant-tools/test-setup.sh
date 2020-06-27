@@ -33,7 +33,7 @@ cd $(dirname $0)/test-vm/
 vagrant up
 
 # Setup all
-ansible-playbook -i ../vagrant.py -i ../vagrant-groups.list -e src_dir="$tempDir" ../../ansible/setup.yml 2>&1 
+ansible-playbook -i ../vagrant.py -i ../vagrant-groups.list -e src_folder="$tempDir" ../../ansible/setup.yml 2>&1 
 
 # Test
 vagrant ssh -c "cd /opt/web-infrared/ ; source venv/bin/activate; python tests/test-infra.py"

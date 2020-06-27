@@ -157,8 +157,9 @@ pipeline {
       steps {
         sh 'rm ${prefixPackage}*.deb || /bin/true '
         unstash debPackageStash
+        #TODO find on which physical node Jenkins is executed and exclude it
         script {
-          docker.image('fabrizio2210/' + targetImage).withRun('--privileged -v /sys/fs/cgroup:/sys/fs/cgroup:ro -e constraint!=$(hostname)'){ c ->
+          docker.image('fabrizio2210/' + targetImage).withRun('--privileged -v /sys/fs/cgroup:/sys/fs/cgroup:ro -e constraint:node!=raspberrypi2)'){ c ->
             sh 'hostname'
             echo "${c.id}"
             sh 'sed -i -e "s/target/' + "${c.id}" + '/" CICD/inventory.list'

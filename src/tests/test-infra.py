@@ -14,5 +14,9 @@ class TestINFRA(unittest.TestCase):
         lirc = self.host.package("lirc")
         self.assertTrue(lirc.is_installed)
 
+    def test_nginx_package(self):
+        nginx = self.host.package("nginx")
+        self.assertTrue(nginx.is_installed)
+
 if __name__ == '__main__':
     unittest.main()

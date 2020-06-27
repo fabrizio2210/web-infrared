@@ -76,10 +76,11 @@
         dest: /etc/systemd/system/uwsgi-web-infrared.service
         mode: 0644
         owner: root
-      notify: systemd reload
+      register: unit_service
 
-    - name: Force all notified handlers to run
-      meta: flush_handlers
+    - name: systemd reload
+      command: systemctl daemon-reload
+      when: unit_service.changed
 
     - name: create uwsgi conf
       template:

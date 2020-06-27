@@ -14,12 +14,14 @@
     - name: Create temp directory
       tempfile: 
         state: directory
+      changed_when: false
       register: tempdir
 
     - name: Copy deb on remote target
       copy:
         src: "{{ item }}"
         dest: "{{ tempdir.path }}/"
+      changed_when: false
       with_fileglob:
         - "{{ src_folder }}/{{ package }}"
 

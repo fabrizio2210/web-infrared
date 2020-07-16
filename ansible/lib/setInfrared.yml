@@ -45,18 +45,6 @@
 
 # COnfigurazione con kernel 4.19.66+
 # https://github.com/raspberrypi/linux/issues/2993
-    - name: Enable module gpio-ir-tx
-      lineinfile:
-        path: /etc/modules
-        line: "gpio-ir-tx"
-        create: yes
-      notify: reboot
-
-    - name: Enable module gpio-ir
-      lineinfile:
-        path: /etc/modules
-        line: "gpio-ir gpio_pin=18"
-      notify: reboot
 
     - name: Point directory of configuration
       lineinfile:

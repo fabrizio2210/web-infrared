@@ -3,6 +3,7 @@
 ![alt text](https://github.com/fabrizio2210/web-infrared/blob/master/images/web_remote_control.jpg "The hardware")
 
 This web remote control is bornt to replace my broken remote control. Somebody can find as inspiration to implement his own.
+You can find more on https://medium.com/@fabrizio2210/a-web-remote-control-4de614a62b32
 
 # Goals
 

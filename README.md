@@ -11,6 +11,22 @@ You can find more on https://medium.com/@fabrizio2210/a-web-remote-control-4de61
 - No app installed on smartphone
 - Adhere to CI/CD mechanism
 
+# Develop
+
+## Requirements
+
+To develop the webservice, you need:
+- Vagrant with NFS support (to share the foldersrc/)
+- libvirt
+
+## Steps to develop
+
+```
+ user@host:~ cd web-infrared/
+ user@host:~/web-infrared vagrant-tools/dev-web.sh
+```
+And then, you can change the file inside `src/` and Flask automatically reloads.
+
 # Installation
 
 You need extra hardware:
@@ -29,7 +45,6 @@ The installation is done by Ansible and Jenkins, but it can be done also manuall
  user@host:~/web-infrared mkdir -p ${buildDir} ; cp -rav * ${buildDir} 
  user@host:~/web-infrared DEBIAN/packetize.sh -b ${buildDir} -i ${installDir} -p ${venvPackage} -o . -f ${prefixPackage}
  user@host:~/web-infrared dpkg -i ./${prefixPackage}-*.deb
-
 ```
 They should be executed on the target platform (i.e. raspberry) because are platworm dependent (e.g. armv6l).
 

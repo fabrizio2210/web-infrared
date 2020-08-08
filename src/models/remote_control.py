@@ -44,7 +44,7 @@ def press(device_name, key_id):
   #print("Call to lircd to execute on \"{}\" the \"{}\" key".format(device_name, key_id))
   try:
     # irsend SEND_ONCE televisore KEY_POWER
-    result = subprocess.run(['irsend', '--count=3', 'SEND_ONCE', device_name, key_id], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    result = subprocess.run(['irsend', 'SEND_ONCE', device_name, key_id], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     if result.returncode == 0:
       return "OK"
     else:

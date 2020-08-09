@@ -15,6 +15,14 @@ pipeline {
     controllerImage = 'web-infrared-controller'
     targetImage = 'web-infrared-target'
   }
+  post {
+    success {
+      telegramSend(message: 'Web infrared build succesfully', chatId: 10584874)
+    }
+    failure {
+      telegramSend(message: 'Error: Web infrared build has a build problem', chatId: 10584874)
+    }
+  }
   stages {
   // Build a container that can be used among the pipeline
   // save it on Dockerhub

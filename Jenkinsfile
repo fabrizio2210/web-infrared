@@ -158,7 +158,7 @@ pipeline {
     stage('TestAnsible') {
       agent {
         docker { 
-          image 'fabrizio2210/' + controllerImage 
+          image 'fabrizio2210/' + controllerImage + ':latest'
           args '-u root -e PATH=$PATH:/var/jenkins_home/bin'
         }
       }

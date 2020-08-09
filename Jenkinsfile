@@ -144,6 +144,7 @@ pipeline {
         docker { 
           image 'fabrizio2210/' + controllerImage 
           args '-u root'
+          alwaysPull true
         }
       }
       steps {
@@ -160,6 +161,7 @@ pipeline {
         docker { 
           image 'fabrizio2210/' + controllerImage + ':latest'
           args '-u root -e PATH=$PATH:/var/jenkins_home/bin'
+          alwaysPull true
         }
       }
       steps {

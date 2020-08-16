@@ -160,7 +160,7 @@ pipeline {
       agent {
         docker { 
           image 'fabrizio2210/' + controllerImage + ':latest'
-          args '-u root -e PATH=$PATH:/var/jenkins_home/bin'
+          args '-u root -e PATH=$PATH:/var/jenkins_home/bin --network=Jenkins_default'
           alwaysPull true
         }
       }
@@ -169,13 +169,19 @@ pipeline {
         unstash debPackageStash
         //TODO find on which physical node Jenkins is executed and exclude it
         script {
-          docker.image('fabrizio2210/' + targetImage).withRun('--privileged -v /sys/fs/cgroup:/sys/fs/cgroup:ro -e constraint:node.hostname!=raspberrypi2'){ c ->
-            sh 'hostname'
-            echo "${c.id}"
-            sh 'sed -i -e "s/target/' + "${c.id}" + '/" CICD/inventory.list'
+          try {
+            sh 'docker service create --name=target --network=Jenkins_default --mount type=bind,source=/sys/fs/cgroup,destination=/sys/fs/cgroup,ro=1 --constraint node.hostname!=raspberrypi0 fabrizio2210/${targetImage}'
+            // Name should be "target", so it is not necessary to change the name of the inventory
             ansiblePlaybook(inventory: 'CICD/inventory.list', playbook: 'ansible/setup.yml', extras: '-e src_folder=' + env.WORKSPACE )
-            sh 'docker exec ' + "${c.id}" + ' /bin/bash -c "cd /${installDir}; . /${installDir}/venv/bin/activate ; python3 tests/test-infra.py"'
+            sh 'ssh root@target docker exec ' + "${c.id}" + ' /bin/bash -c "cd /${installDir}; . /${installDir}/venv/bin/activate ; python3 tests/test-infra.py"'
+          } finally {
+            sh 'docker service rm target'
           }
+          //docker.image('fabrizio2210/' + targetImage).withRun('--privileged -v /sys/fs/cgroup:/sys/fs/cgroup:ro -e constraint:node.hostname!=raspberrypi2'){ c ->
+          //  sh 'sed -i -e "s/target/' + "${c.id}" + '/" CICD/inventory.list'
+          //  ansiblePlaybook(inventory: 'CICD/inventory.list', playbook: 'ansible/setup.yml', extras: '-e src_folder=' + env.WORKSPACE )
+          //  sh 'docker exec ' + "${c.id}" + ' /bin/bash -c "cd /${installDir}; . /${installDir}/venv/bin/activate ; python3 tests/test-infra.py"'
+          //}
         }
       }
     }

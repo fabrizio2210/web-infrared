@@ -26,3 +26,9 @@ RUN pip3 install --upgrade setuptools && pip3 install ansible
 
 RUN mkdir -p /etc/ansible && echo "[local]\nlocalhost ansible_connection=local" > /etc/ansible/hosts
 
+RUN mkdir -p /root/.ssh && chmod 600 /root/.ssh
+
+COPY keys/controller /root/.ssh/id_rsa
+
+RUN chmod 400 /root/.ssh/id_rsa
+

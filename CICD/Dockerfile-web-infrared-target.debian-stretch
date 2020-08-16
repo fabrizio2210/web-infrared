@@ -5,6 +5,11 @@ RUN apt-get update -y && apt-get install -y --no-install-recommends \
     python3.5 \
     python3-virtualenv \
     systemd \
+    openssh-server \
  && apt-get clean 
+
+RUN mkdir -p /root/.ssh && chmod 600 /root/.ssh
+
+COPY keys/controller.pub /root/.ssh/authorized_keys
 
 ENTRYPOINT ["/bin/systemd"]

@@ -28,7 +28,7 @@ RUN mkdir -p /etc/ansible && echo "[local]\nlocalhost ansible_connection=local" 
 
 RUN mkdir -p /root/.ssh && chmod 600 /root/.ssh
 
-COPY keys/controller /root/.ssh/id_rsa
+COPY CICD/keys/controller /root/.ssh/id_rsa
 
 RUN chmod 400 /root/.ssh/id_rsa
 

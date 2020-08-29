@@ -18,6 +18,8 @@ debPackageStash='deb'
 venvPackageStash='venv'
 controllerImage='web-infrared-controller'
 targetImage='web-infrared-target'
+agentUser='jenkins'
+agentHost='infrarosso.oss'
 
 runRepository="$(mktemp -d)"
 workspace=$(dirname $0)
@@ -42,31 +44,33 @@ changedFiles="$(git diff --name-only HEAD^1 HEAD)"
 ## save it on Dockerhub
 
 #TODO push  images on DockerHUB
-if echo "$changedFiles" | grep -q $dockerCondition ; then
+# Push always?
+#if echo "$changedFiles" | grep -q $dockerCondition ; then
   docker build -t fabrizio2210/${controllerImage}:latest -f CICD/Dockerfile-${controllerImage}.debian-stretch .
   docker build -t fabrizio2210/${targetImage}:latest -f CICD/Dockerfile-${targetImage}.debian-stretch .
   #docker.withRegistry( '', registryCredential ) {
   #  controller.push()
   #  target.push()
   #}
-fi
+#fi
 
 ###########
 # BuildVenv
 ## Build the virtual env from requirements.txt
 ## Save it for reuse
 
-#TODO build on armv6l architecture (infrarosso.oss)
 if [ ! -e ${repository}/${venvPackage} ] || echo "$changedFiles" | grep -q $venvCondition ; then
-container=$(docker run -d fabrizio2210/${controllerImage} tail -f /dev/null)
-docker exec ${container} mkdir -p ${buildDir}
-docker cp . ${container}:${buildDir}
-docker exec ${container} ls  -l /tmp/build
-docker exec ${container} ${buildDir}/DEBIAN/venvCreation.sh -b ${buildDir} -i /${installDir} -o ${venvPackage}
-docker cp ${container}:${venvPackage} .
-docker container rm --force ${container}
+  agentKeyFile=/tmp/ssh_key
+  echo ${agentKey} | base64 -d > ${agentKeyFile}
+  chmod 600 /tmp/ssh_key
+  ssh -i ${agentKeyFile} -o StrictHostKeyChecking=no ${agentUser}@${agentHost} bash -c "rm -rf ${buildDir} \; mkdir -p ${buildDir}"
+  scp -i ${agentKeyFile} -o StrictHostKeyChecking=no -r * ${agentUser}@${agentHost}:${buildDir}
+  ssh -i ${agentKeyFile} -o StrictHostKeyChecking=no ${agentUser}@${agentHost} ls -l ${buildDir}
+  ssh -i ${agentKeyFile} -o StrictHostKeyChecking=no ${agentUser}@${agentHost} ${buildDir}/DEBIAN/venvCreation.sh -b ${buildDir} -i /${installDir} -o ${venvPackage}
+  scp -i ${agentKeyFile} -o StrictHostKeyChecking=no ${agentUser}@${agentHost}:${venvPackage} .
   cp ${venvPackage} ${repository}/
   rm ${venvPackage}
+  rm ${agentKeyFile}
 fi
 
 ##########
@@ -107,7 +111,7 @@ docker container rm --force ${container}
 # TestAnsible
 
 docker network inspect Jenkins_default || docker network create --attachable Jenkins_default
-docker container rm target --force || /bin/true
+docker container rm target --force > /dev/null 2>&1 || /bin/true
 container=$(docker run -d --network=Jenkins_default fabrizio2210/${controllerImage} tail -f /dev/null)
 docker exec ${container} mkdir -p ${buildDir}
 docker cp . ${container}:${buildDir}
@@ -118,20 +122,16 @@ docker exec ${container} bash -c "cd ${buildDir}; ansible-playbook -i CICD/inven
 docker container rm --force ${container}
 docker container rm target --force
 
+#####################
+# DeployConfiguration
+
+container=$(docker run -d --network=Jenkins_default fabrizio2210/${controllerImage} tail -f /dev/null)
+docker exec ${container} mkdir -p ${buildDir}
+docker cp . ${container}:${buildDir}
+docker cp ${repository}/${prefixPackage}-$(cat VERSION).deb ${container}:${buildDir}/   
+deployKeyFile=/tmp/ssh_key
+docker exec ${container} bash -c "echo ${deployKey} | base64 -d > ${deployKeyFile}"
+docker exec ${container} chmod 600 /tmp/ssh_key
+docker exec ${container} bash -c "cd ${buildDir}; ansible-playbook --private-key ${deployKeyFile} -i ansible/hosts.list ansible/setup.yml -e src_folder=${buildDir}"
+
 exit 0
-  // Deploy the configuration and DEB with Ansible
-    stage('DeployConfiguration') {
-      agent {
-        docker { 
-          image 'fabrizio2210/' + controllerImage 
-          args '-u root -e PATH=$PATH:/var/jenkins_home/bin'
-        }
-      }
-      steps {
-        sh 'rm ${prefixPackage}*.deb || /bin/true '
-        unstash debPackageStash
-        ansiblePlaybook(credentialsId: 'id_oss_deploy', inventory: 'ansible/hosts.list', playbook: 'ansible/setup.yml', extras: '-e src_folder=' + env.WORKSPACE )
-      }
-    }
-  }
-}

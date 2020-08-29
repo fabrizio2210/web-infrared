@@ -1,5 +1,5 @@
 [control]
-container ansible_connection=docker ansible_host=target ansible_user=root
+container ansible_host=target ansible_user=root
 
 [webserver:children]
 control

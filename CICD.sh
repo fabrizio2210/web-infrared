@@ -58,7 +58,7 @@ changedFiles="$(git diff --name-only HEAD^1 HEAD)"
 ## Build the virtual env from requirements.txt
 ## Save it for reuse
 
-if [ ! -e ${projectRepository}/${venvPackage} ] || echo "$changedFiles" | grep -q $venvCondition ; then
+if [ ! -e ${PROJECT_REPOSITORY}/${venvPackage} ] || echo "$changedFiles" | grep -q $venvCondition ; then
   agentKeyFile=/tmp/ssh_key
   echo ${agentKey} | base64 -d > ${agentKeyFile}
   chmod 600 /tmp/ssh_key
@@ -67,7 +67,7 @@ if [ ! -e ${projectRepository}/${venvPackage} ] || echo "$changedFiles" | grep -
   ssh -i ${agentKeyFile} -o StrictHostKeyChecking=no ${agentUser}@${agentHost} ls -l ${buildDir}
   ssh -i ${agentKeyFile} -o StrictHostKeyChecking=no ${agentUser}@${agentHost} ${buildDir}/DEBIAN/venvCreation.sh -b ${buildDir} -i /${installDir} -o ${venvPackage}
   scp -i ${agentKeyFile} -o StrictHostKeyChecking=no ${agentUser}@${agentHost}:${venvPackage} .
-  cp ${venvPackage} ${projectRepository}/
+  cp ${venvPackage} ${PROJECT_REPOSITORY}/
   rm ${venvPackage}
   rm ${agentKeyFile}
 fi
@@ -77,10 +77,10 @@ fi
 ## Create the DEB package
 ## Save it for the delivery
 
-if [ ! -e ${projectRepository}/${prefixPackage}-$(cat VERSION).deb ] || echo $changedFiles | grep "$debCondition" ; then
+if [ ! -e ${PROJECT_REPOSITORY}/${prefixPackage}-$(cat VERSION).deb ] || echo $changedFiles | grep "$debCondition" ; then
   container=$(docker run -d fabrizio2210/${controllerImage} tail -f /dev/null)
   docker exec ${container} mkdir -p ${buildDir}
-  cp ${projectRepository}/${venvPackage} $workspace/
+  cp ${PROJECT_REPOSITORY}/${venvPackage} $workspace/
   rm ${prefixPackage}*.deb || /bin/true
   docker cp . ${container}:${buildDir}
   docker exec ${container} ${buildDir}/DEBIAN/packetize.sh -b ${buildDir} \
@@ -90,7 +90,7 @@ if [ ! -e ${projectRepository}/${prefixPackage}-$(cat VERSION).deb ] || echo $ch
                                                         -f ${prefixPackage}
   rm $workspace/${venvPackage}
   docker exec ${container} ls  -l 
-  docker cp ${container}:/${prefixPackage}-$(cat VERSION).deb ${projectRepository}/
+  docker cp ${container}:/${prefixPackage}-$(cat VERSION).deb ${PROJECT_REPOSITORY}/
   docker container rm --force ${container}
 fi
 
@@ -99,7 +99,7 @@ fi
 
 container=$(docker run -d fabrizio2210/${controllerImage} tail -f /dev/null)
 docker cp . ${container}:${buildDir}
-docker cp ${projectRepository}/${prefixPackage}-$(cat VERSION).deb ${container}:/   
+docker cp ${PROJECT_REPOSITORY}/${prefixPackage}-$(cat VERSION).deb ${container}:/   
 docker exec ${container} bash -c "ln -s /bin/true /usr/bin/irsend"
 docker exec ${container} bash -c "dpkg -i ./${prefixPackage}-*.deb"
 docker exec ${container} bash -c "cd /${installDir}; . /${installDir}/venv/bin/activate ; python3 tests/test-app.py"
@@ -114,7 +114,7 @@ docker container rm target --force > /dev/null 2>&1 || /bin/true
 container=$(docker run -d --network=Jenkins_default fabrizio2210/${controllerImage} tail -f /dev/null)
 docker exec ${container} mkdir -p ${buildDir}
 docker cp . ${container}:${buildDir}
-docker cp ${projectRepository}/${prefixPackage}-$(cat VERSION).deb ${container}:${buildDir}/   
+docker cp ${PROJECT_REPOSITORY}/${prefixPackage}-$(cat VERSION).deb ${container}:${buildDir}/   
 #docker service create --name=target --network=Jenkins_default --mount type=bind,source=/sys/fs/cgroup,destination=/sys/fs/cgroup,ro=1 --constraint node.hostname!=raspberrypi0 fabrizio2210/${targetImage}
 docker run -d --name=target --network=Jenkins_default --privileged=true --mount type=bind,source=/sys/fs/cgroup,destination=/sys/fs/cgroup,ro=1 fabrizio2210/${targetImage}
 docker exec ${container} bash -c "cd ${buildDir}; ansible-playbook -i CICD/inventory.list ansible/setup.yml -e src_folder=${buildDir}"
@@ -127,7 +127,7 @@ docker container rm target --force
 container=$(docker run -d --network=Jenkins_default fabrizio2210/${controllerImage} tail -f /dev/null)
 docker exec ${container} mkdir -p ${buildDir}
 docker cp . ${container}:${buildDir}
-docker cp ${projectRepository}/${prefixPackage}-$(cat VERSION).deb ${container}:${buildDir}/   
+docker cp ${PROJECT_REPOSITORY}/${prefixPackage}-$(cat VERSION).deb ${container}:${buildDir}/   
 deployKeyFile=/tmp/ssh_key
 docker exec ${container} bash -c "echo ${deployKey} | base64 -d > ${deployKeyFile}"
 docker exec ${container} chmod 600 /tmp/ssh_key

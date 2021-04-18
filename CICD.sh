@@ -63,7 +63,7 @@ if [ ! -e ${repository}/${venvPackage} ] || echo "$changedFiles" | grep -q $venv
   agentKeyFile=/tmp/ssh_key
   echo ${agentKey} | base64 -d > ${agentKeyFile}
   chmod 600 /tmp/ssh_key
-  ssh -i ${agentKeyFile} -o StrictHostKeyChecking=no ${agentUser}@${agentHost} bash -c "rm -rf ${buildDir} \; mkdir -p ${buildDir}"
+  ssh -i ${agentKeyFile} -o StrictHostKeyChecking=no ${agentUser}@${agentHost} bash -c "\"rm -rf ${buildDir} ; mkdir -p ${buildDir}\""
   scp -i ${agentKeyFile} -o StrictHostKeyChecking=no -r * ${agentUser}@${agentHost}:${buildDir}
   ssh -i ${agentKeyFile} -o StrictHostKeyChecking=no ${agentUser}@${agentHost} ls -l ${buildDir}
   ssh -i ${agentKeyFile} -o StrictHostKeyChecking=no ${agentUser}@${agentHost} ${buildDir}/DEBIAN/venvCreation.sh -b ${buildDir} -i /${installDir} -o ${venvPackage}
